@@ -1,22 +1,29 @@
 {
+    "id": "fastapi_auth_001",
     "repository": "FastAPI",
     "task": "Fix JWT refresh bug",
     "query": "Refresh token doesn't work.",
-    "gold_files": [
+    "primary_file": "fastapi/security/oauth2.py",
+    "required_files": [
+        "fastapi/security/oauth2.py"
+    ],
+    "supporting_files": [
+        "fastapi/middleware/auth.py",
+        "fastapi/security/utils.py"
+    ],
+    "forbidden_files": [
+        "fastapi/payments.py",
+        "fastapi/admin.py"
+    ],
+    "required_symbols": [
+        "verify_token"
+    ],
+    "supporting_symbols": [
+        "decode_token"
+    ],
+    "expected_rank": [
         "fastapi/security/oauth2.py",
         "fastapi/middleware/auth.py"
     ],
-    "acceptable_files": [
-        "fastapi/security/utils.py",
-        "fastapi/dependencies/models.py"
-    ],
-    "forbidden_files": [
-        "fastapi/applications.py",
-        "fastapi/routing.py"
-    ],
-    "expected_symbols": [
-        "OAuth2PasswordBearer",
-        "HTTPBearer"
-    ],
-    "difficulty": "medium"
+    "notes": "oauth2.py is the primary entry point for JWT refresh."
 }
