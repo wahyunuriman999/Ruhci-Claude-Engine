@@ -1,5 +1,11 @@
 class CandidateSelector:
     def select(self, query: str, all_files: list, max_candidates: int = 200) -> list:
+        """
+        Filters candidates based on query term overlap with file paths.
+        LIMITATION (v0.2.1): Pure path matching can miss highly relevant files 
+        that do not contain the query terms in their filepath. 
+        A semantic/vector pre-filter is planned for future releases.
+        """
         # Deterministic filtering based on path relevance
         query_terms = set(query.lower().split())
         

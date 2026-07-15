@@ -138,8 +138,8 @@ In our controlled evaluation (using Claude 3.5 Sonnet at Temperature 0) across 5
 
 | Capability | Native Context (Brute-Force) | Optimized + Ruhci |
 | :--- | :--- | :--- |
-| **Context Size** | Massive (often >200k tokens) | Surgically small (<10k tokens) |
-| **Cost** | Exorbitant | ~8% of original cost |
+| **Context Size** | Massive (often >200k tokens) | TBD — pending empirical benchmark |
+| **Cost** | Exorbitant | TBD — pending empirical benchmark |
 | **Repository Noise** | High | Near zero |
 | **Explainability** | Black Box | Transparent AST Traces |
 | **Determinism** | Probabilistic | Mathematically verifiable |

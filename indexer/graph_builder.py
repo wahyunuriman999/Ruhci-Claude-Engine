@@ -45,7 +45,7 @@ class DependencyGraph:
                 else:
                     # Prefix matching for submodule imports
                     for mod, path in module_to_path.items():
-                        if path != meta.filepath and (imp.startswith(mod) or mod.startswith(imp)):
+                        if path != meta.filepath and (imp == mod or imp.startswith(f"{mod}.")):
                             self.graph.add_edge(meta.filepath, path, relation="imports")
                 
         logger.info(f"Graph built with {self.graph.number_of_nodes()} nodes and {self.graph.number_of_edges()} edges.")
