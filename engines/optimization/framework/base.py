@@ -5,27 +5,28 @@
 # All rights reserved.
 # ==========================================
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 
-class OptimizationMetrics:
-    def __init__(self, input_size: int, output_size: int, processing_time_ms: float, confidence: float, cost_impact: float):
-        self.input_size = input_size
-        self.output_size = output_size
-        self.improvement = 0.0 if input_size == 0 else ((input_size - output_size) / input_size) * 100
-        self.processing_time_ms = processing_time_ms
+class OptimizationResult:
+    def __init__(self, 
+                 input_tokens: int = 0, 
+                 output_tokens: int = 0, 
+                 latency_ms: float = 0.0, 
+                 confidence: float = 1.0, 
+                 quality_score: float = 1.0, 
+                 cost_saved_usd: float = 0.0,
+                 warnings: List[str] = None,
+                 actions_applied: List[str] = None):
+        self.input_tokens = input_tokens
+        self.output_tokens = output_tokens
+        self.reduction_percent = 0.0 if input_tokens == 0 else ((input_tokens - output_tokens) / input_tokens) * 100
+        self.latency_ms = latency_ms
         self.confidence = confidence
-        self.cost_impact = cost_impact
+        self.quality_score = quality_score
+        self.cost_saved_usd = cost_saved_usd
+        self.warnings = warnings or []
+        self.actions_applied = actions_applied or []
 
 class BaseOptimizer:
-    def input(self, data: Any):
-        pass
-    def analyze(self):
-        pass
-    def optimize(self):
-        pass
-    def measure(self):
-        pass
-    def validate(self):
-        pass
-    def return_metrics(self) -> OptimizationMetrics:
-        return OptimizationMetrics(0, 0, 0.0, 0.0, 0.0)
+    def execute(self, data: Any, **kwargs) -> OptimizationResult:
+        raise NotImplementedError
