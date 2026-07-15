@@ -128,12 +128,12 @@ In our controlled evaluation (using Claude 3.5 Sonnet at Temperature 0) across 5
 <div align="center">
   <table>
     <tr>
-      <td align="center"><h3>92.1%*</h3>Token Reduction</td>
-      <td align="center"><h3>92.1%*</h3>Cost Reduction</td>
-      <td align="center"><h3>93.5%</h3>Latency Reduction</td>
-    </tr>
-  </table>
-  <p><em>*In our controlled evaluation, Ruhci reduced input context requirements by an average of 92.1% while maintaining 100% task success parity across 25 blind evaluation tasks. Actual savings may vary based on provider caching strategies.</em></p>
+      <td align="center"><h3>92.1%*</h3>Target Token Reduction</td>
+      <td align="center"><h3>92.1%*</h3>Target Cost Reduction</td>
+      <td align="center"><h3>0</h3>Target Regression Fails</td>
+  </tr>
+</table>
+  <p><em>*<strong>DISCLAIMER:</strong> The 92.1% reduction figure and 100% parity are <strong>Simulated Baseline Target Metrics</strong> used to design the evaluation framework during the scaffolding phase. They represent the theoretical maximum efficiency of the architecture, not empirical results of the v0.1 engine running on live repositories. The current release is transitioning to functional AST execution.</em></p>
 </div>
 
 | Capability | Native Context (Brute-Force) | Optimized + Ruhci |

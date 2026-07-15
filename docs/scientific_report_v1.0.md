@@ -46,8 +46,11 @@ Ruhci employs a multi-stage deterministic pipeline:
 | Context Sufficiency Score | - | 100.0% |
 | Regression Failure | - | 0 |
 
-## 9. Analysis
-Ruhci achieved a **92.1% net reduction** in token usage and cost. The Context Sufficiency Score of 100.0% alongside 0 Regression Failures proves that deterministic context pruning successfully filters noise without stripping vital execution graphs or hidden dependencies.
+## Core Findings (Simulated Target Metrics)
+
+> **DISCLAIMER**: The following metrics are *Simulated Baseline Target Metrics* generated during the initial framework scaffolding to validate the evaluation pipeline. They do not represent empirical measurements of the live v0.1 engine. We are actively transitioning from simulation to real empirical benchmarking.
+
+Ruhci targets a **92.1% net reduction** in token usage and cost. The theoretical Context Sufficiency Score of 100.0% alongside 0 Regression Failures aims to prove that deterministic context pruning successfully filters noise without stripping vital execution graphs or hidden dependencies.
 
 
 ## 9.5. Threats to Validity
