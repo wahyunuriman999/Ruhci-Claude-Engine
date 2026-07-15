@@ -1,4 +1,12 @@
-<div align="center">
+import os
+
+base_dir = r"C:\Users\ROG G532 LV\.gemini\antigravity\scratch\Ruhci-Claude-Engine"
+
+def write_file(rel_path, content):
+    with open(os.path.join(base_dir, rel_path), 'w', encoding='utf-8') as f:
+        f.write(content)
+
+readme_content = """<div align="center">
   <h1>Ruhci</h1>
   <p><strong>Deterministic Context Intelligence Engine</strong></p>
   <p><em>Repository Intelligence Layer for AI Coding Agents</em></p>
@@ -265,3 +273,6 @@ Read our [Community Benchmark Guidelines](benchmark/community/README.md) to subm
 **Copyright © 2026 Wahyu Nur Iman**  
 Licensed under the MIT License.  
 *Ruhci™ is a project by Wahyu Nur Iman.*
+"""
+
+write_file("README.md", readme_content)
