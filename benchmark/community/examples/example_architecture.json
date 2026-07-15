@@ -1,0 +1,15 @@
+{
+  "id": "community_example_003",
+  "repository": "flask",
+  "task_type": "architecture",
+  "query": "How is the application context pushed and popped during a request lifecycle?",
+  "required_files": [
+    "flask/ctx.py",
+    "flask/app.py"
+  ],
+  "optional_files": ["flask/globals.py"],
+  "forbidden_files": [],
+  "required_symbols": ["AppContext", "push", "pop"],
+  "difficulty": "hard",
+  "notes": "Heavily reliant on globals and thread-local state which can confuse static analysis."
+}

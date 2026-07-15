@@ -1,0 +1,14 @@
+{
+  "id": "community_case_000",
+  "repository": "pandas",
+  "task_type": "bug_fix",
+  "query": "Describe the complex issue to solve here",
+  "required_files": [
+    "path/to/expected_file.py"
+  ],
+  "optional_files": [],
+  "forbidden_files": [],
+  "required_symbols": [],
+  "difficulty": "hard",
+  "notes": "Explain why this case is challenging for a static analysis engine."
+}

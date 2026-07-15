@@ -1,0 +1,15 @@
+{
+  "id": "community_example_002",
+  "repository": "requests",
+  "task_type": "feature",
+  "query": "Implement automatic retry on 429 Too Many Requests",
+  "required_files": [
+    "requests/adapters.py",
+    "requests/sessions.py"
+  ],
+  "optional_files": [],
+  "forbidden_files": [],
+  "required_symbols": ["HTTPAdapter", "Session"],
+  "difficulty": "medium",
+  "notes": "Requires modifying the underlying urllib3 adapter."
+}

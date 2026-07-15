@@ -1,0 +1,14 @@
+{
+  "id": "community_example_001",
+  "repository": "fastapi",
+  "task_type": "bug_fix",
+  "query": "Fix silent validation error in JWT dependency",
+  "required_files": [
+    "fastapi/security/oauth2.py"
+  ],
+  "optional_files": ["fastapi/dependencies/utils.py"],
+  "forbidden_files": [],
+  "required_symbols": ["OAuth2PasswordBearer"],
+  "difficulty": "medium",
+  "notes": "Classic dependency injection bug."
+}
