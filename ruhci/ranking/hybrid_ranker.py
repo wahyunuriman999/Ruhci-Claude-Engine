@@ -73,9 +73,10 @@ class HybridRankerV02:
             # 3. Dependency Relevance
             dependency_score = self._compute_dependency_relevance(filepath, graph)
             
-            # THE SEMANTIC GATE: Prevent Dependency Dominance
-            if symbol_score <= 0.1 and semantic_score < 0.2:
-                dependency_score *= 0.2
+            # DEPENDENCY-SEMANTIC CALIBRATION
+            # Prevent files with huge dependency scores (like models.py) from dominating 
+            # if their semantic relevance is low.
+            dependency_score *= min(1.0, semantic_score * 4.0)
             
             # 4. Intent Score
             intent_score = 1.0 if self.intent_classifier.get_role_boost(intents, filepath) > 1.0 else 0.5
@@ -103,9 +104,6 @@ class HybridRankerV02:
             filepath_lower = filepath.lower()
             if "test" in filepath_lower:
                 final_score *= 0.5
-            # Exception Penalty: files solely defining errors shouldn't top logic queries
-            if "exception" in filepath_lower or "error" in filepath_lower:
-                final_score *= 0.4
                 
             ranked_results.append({
                 "file": filepath,

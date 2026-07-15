@@ -243,15 +243,21 @@ Ruhci is designed to be pipeline-agnostic. You can pipe its output directly into
 - **Continue.dev**
 - **Custom CI/CD Pipelines**
 
-### Using Ruhci with `free-claude-code`
+### Using Ruhci with Free Local/Proxy AI Agents
 
-Ruhci natively integrates with [free-claude-code](https://github.com/Alishahryar1/free-claude-code) to provide a **100% free, zero API cost** context pipeline.
+Ruhci natively provides the `ruhci_ask.py` CLI to bridge its local context pipeline with free AI execution tools.
+
+> **Disclaimer**: The default configuration routes to `free-claude-code`, which is a third-party community proxy. Please review their repository and respect upstream terms of service. Ruhci is pipeline-agnostic and fully supports routing to 100% local agents like Ollama.
 
 1. **Ruhci** filters your massive codebase locally into a few highly relevant files.
-2. The `ruhci_ask.py` CLI bridges this filtered context into `free-claude-code`, which routes the query to free AI models (like Gemini or local Ollama).
+2. The `ruhci_ask.py` CLI bridges this filtered context into your chosen free AI model.
 
 **Execute the complete pipeline locally:**
 ```bash
+# Route to Ollama (100% Local & Free)
+python ruhci_ask.py "How does SSL certificate verification work?" --repo /path/to/repo --agent ollama
+
+# Route to community proxy (Default)
 python ruhci_ask.py "How does SSL certificate verification work?" --repo /path/to/repo
 ```
 
@@ -318,6 +324,7 @@ from ruhci.ranking.hybrid_ranker import HybridRankerV02
 class RuhciEngine:
     def __init__(self, target_dir: str):
         self.target_dir = target_dir
+        self.ranker = HybridRankerV02()
 
     def compile_context(self, query: str) -> list[dict]:
         all_files = []
@@ -345,8 +352,7 @@ class RuhciEngine:
         selector = CandidateSelector()
         candidates = selector.select(query, all_files, graph=graph, max_candidates=50)
 
-        ranker = HybridRankerV02()
-        results = ranker.rank(query, candidates, metadata_index, graph)
+        results = self.ranker.rank(query, candidates, metadata_index, graph)
         
         formatted_results = []
         for r in results:
@@ -437,7 +443,7 @@ class HybridRankerV02:
             dependency_score = self._compute_dependency_relevance(filepath, graph)
             
             # THE SEMANTIC GATE: Prevent Dependency Dominance
-            if symbol_score <= 0.1 and semantic_score < 0.4:
+            if symbol_score <= 0.1 and semantic_score < 0.2:
                 dependency_score *= 0.2
             
             # 4. Intent Score
@@ -450,7 +456,7 @@ class HybridRankerV02:
             
             # 6. Path Score
             filename_no_ext = filepath.lower().replace('\\', '/').split('/')[-1].replace('.py', '')
-            path_score = 1.0 if any(term in filepath.lower() or filename_no_ext in term for term in query_terms) else 0.3
+            path_score = 1.0 if any(term in filepath.lower() or term in filename_no_ext for term in query_terms) else 0.3
             
             # Fusion Calculation
             final_score = (
@@ -462,9 +468,13 @@ class HybridRankerV02:
                 (path_score * self.weights["path"])
             )
             
-            # Explicit final penalty for test files
-            if "test" in filepath.lower():
+            # Explicit final penalties
+            filepath_lower = filepath.lower()
+            if "test" in filepath_lower:
                 final_score *= 0.5
+            # Exception Penalty: files solely defining errors shouldn't top logic queries
+            if "exception" in filepath_lower or "error" in filepath_lower:
+                final_score *= 0.4
                 
             ranked_results.append({
                 "file": filepath,
@@ -546,8 +556,8 @@ class ContentAnalyzer:
         for token in content_tokens:
             for term in query_terms:
                 # substring match to handle stemming variations inside the content 
-                # (e.g. term 'cert' matching 'certificate')
-                if term in token:
+                # e.g., term 'certificate' matching token 'certifi' or 'cert'
+                if term in token or (len(token) > 3 and token in term):
                     content_term_counts[term] += 1
 
         matched_terms = sum(1 for term, count in content_term_counts.items() if count > 0)
@@ -605,39 +615,40 @@ def get_top_files_content(engine: RuhciEngine, query: str, top_n: int = 3) -> st
         
     return context_text
 
-def execute_free_claude_code(query: str, context: str):
+def execute_ai_agent(query: str, context: str, agent: str):
     """
-    Executes free-claude-code by passing the context and query.
-    Note: free-claude-code acts as a drop-in proxy for Anthropic's 'claude' CLI.
+    Executes the specified AI CLI proxy/agent by passing the context and query.
+    Supports free-claude-code, ollama, or standard claude CLI.
     """
     final_prompt = f"Context from Ruhci Engine:\n{context}\nUser Query: {query}"
     
-    print("\n[Bridge] Forwarding highly-filtered context to free-claude-code...")
-    
-    # We use npx to ensure we're using the latest free-claude-code or locally installed claude
-    # The actual claude CLI accepts `-p` for prompt. 
+    print(f"\n[Bridge] Forwarding highly-filtered context to {agent}...")
     
     try:
-        # Since 'free-claude-code' wraps the official CLI, we try executing it.
-        # Alternatively, we can use `npx -y free-claude-code` if it has its own binary.
-        cmd = ["npx", "-y", "claude", "-p", final_prompt]
+        if agent == "free-claude-code":
+            cmd = ["npx", "-y", "claude", "-p", final_prompt]
+        elif agent == "ollama":
+            # Just an example for Ollama using a generic run command
+            cmd = ["ollama", "run", "llama3", final_prompt]
+        else:
+            # Fallback to standard claude or any custom command
+            cmd = [agent, "-p", final_prompt]
+            
         print(f"[Bridge] Executing: {' '.join(cmd)}")
-        
-        # Subprocess call with shell=True on windows is sometimes needed for npx
         is_windows = sys.platform == "win32"
         subprocess.run(cmd, check=True, shell=is_windows)
     except Exception as e:
-        print(f"\n[Error] Failed to execute free-claude-code: {e}")
-        print("Please ensure you have Node.js installed and the CLI available.")
+        print(f"\n[Error] Failed to execute agent ({agent}): {e}")
         print("Fallback: You can copy the context manually. Dumping to 'ruhci_output.txt'")
         with open("ruhci_output.txt", "w", encoding="utf-8") as f:
             f.write(final_prompt)
 
 def main():
-    parser = argparse.ArgumentParser(description="Ruhci CLI Bridge to free-claude-code")
+    parser = argparse.ArgumentParser(description="Ruhci CLI Bridge to Free AI Agents")
     parser.add_argument("query", type=str, help="The query or task you want the AI to solve")
     parser.add_argument("--repo", type=str, default=".", help="Path to the repository")
     parser.add_argument("--top", type=int, default=3, help="Number of files to extract")
+    parser.add_argument("--agent", type=str, default="free-claude-code", help="The AI CLI to route to (free-claude-code, ollama, claude)")
     parser.add_argument("--dry-run", action="store_true", help="Just print the context, do not execute AI")
     
     args = parser.parse_args()
@@ -659,7 +670,7 @@ def main():
             f.write(f"Query: {args.query}\n\n{context}")
         print("Dumped to ruhci_output.txt")
     else:
-        execute_free_claude_code(args.query, context)
+        execute_ai_agent(args.query, context, args.agent)
 
 if __name__ == "__main__":
     main()

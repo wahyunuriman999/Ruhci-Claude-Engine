@@ -1,12 +1,21 @@
 <div align="center">
-  <h1>Ruhci</h1>
-  <p><strong>Deterministic Context Intelligence Engine</strong></p>
+  <h1 align="center">Ruhci Engine v0.6-beta</h1>
+  <p align="center"><strong>Deterministic Context Intelligence Engine</strong></p>
   <p><em>Repository Intelligence Layer for AI Coding Agents</em></p>
 
-  [![Version](https://img.shields.io/badge/version-v0.4_Vector_Semantic_Preview-blue.svg)](#)
+  Ruhci (dibaca: Ru-ci) adalah mesin pencarian (retrieval) ringan dan 100% offline yang dirancang khusus untuk memfilter *codebase* Python raksasa menjadi hanya beberapa file yang paling relevan.
+
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
-  [![Status](https://img.shields.io/badge/status-Community_Validation-orange.svg)](#)
+  [![Status](https://img.shields.io/badge/status-Beta-blue.svg)](#)
 </div>
+
+## ⚠️ Limitations & Known Edge Cases (v0.6-beta)
+Sebagai sistem *deterministic* berbasis TF-IDF dan AST (tanpa Vector Embeddings), Ruhci memiliki keterbatasan bawaan:
+- **Substring Match False Positives**: Untuk *query term* yang sangat pendek (seperti `ssl`, `jwt`, `db`), pencocokan *substring* dua arah (`term in token or token in term`) dapat memicu *false positive* (contoh: `ssl` akan cocok dengan variabel bernama `sesslink`).
+- **Semantic Gap**: Tidak dapat mengenali sinonim konseptual (misal: "TLS handshake" tidak akan menangkap file berisi kata "SSL" jika tidak ada irisan string sama sekali).
+- **Abbreviation Mismatch**: Pengembang mungkin menggunakan singkatan di kode (misal `jwt`), sementara *user* bertanya dengan kata penuh ("JSON Web Token"). Ruhci tidak akan menemukan kecocokan tanpa *embedding*.
+
+Oleh karena itu, Ruhci diposisikan sebagai **komplemen struktural yang efisien** untuk sistem Vector RAG, bukan pengganti mutlak.
 
 <br>
 
