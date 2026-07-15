@@ -1,0 +1,33 @@
+Empirical Run 001 - Target: requests_clone
+Query: How are HTTP adapters initialized and managed for sessions?
+----------------------------------------
+[1] File: requests_clone\tests\test_utils.py
+    Score: 0.5300
+    Signals: {"symbol": 1.0, "dependency": 0.1, "semantic": 0.0, "intent": 0.5, "role": 0.8, "path": 0.3}
+[2] File: requests_clone\src\requests\auth.py
+    Score: 0.5150
+    Signals: {"symbol": 1.0, "dependency": 0.1, "semantic": 0.0, "intent": 0.5, "role": 0.5, "path": 0.3}
+[3] File: requests_clone\src\requests\models.py
+    Score: 0.5150
+    Signals: {"symbol": 1.0, "dependency": 0.1, "semantic": 0.0, "intent": 0.5, "role": 0.5, "path": 0.3}
+[4] File: requests_clone\tests\conftest.py
+    Score: 0.5150
+    Signals: {"symbol": 0.9999999999999999, "dependency": 0.1, "semantic": 0.0, "intent": 0.5, "role": 0.5, "path": 0.3}
+[5] File: requests_clone\tests\test_lowlevel.py
+    Score: 0.5150
+    Signals: {"symbol": 1.0, "dependency": 0.1, "semantic": 0.0, "intent": 0.5, "role": 0.5, "path": 0.3}
+[6] File: requests_clone\tests\test_requests.py
+    Score: 0.5150
+    Signals: {"symbol": 1.0, "dependency": 0.1, "semantic": 0.0, "intent": 0.5, "role": 0.5, "path": 0.3}
+[7] File: requests_clone\tests\testserver\server.py
+    Score: 0.5150
+    Signals: {"symbol": 1.0, "dependency": 0.1, "semantic": 0.0, "intent": 0.5, "role": 0.5, "path": 0.3}
+[8] File: requests_clone\src\requests\adapters.py
+    Score: 0.4600
+    Signals: {"symbol": 0.7, "dependency": 0.1, "semantic": 0.2, "intent": 0.5, "role": 0.5, "path": 1.0}
+[9] File: requests_clone\tests\test_testserver.py
+    Score: 0.3950
+    Signals: {"symbol": 0.7, "dependency": 0.1, "semantic": 0.0, "intent": 0.5, "role": 0.5, "path": 0.3}
+[10] File: requests_clone\tests\test_adapters.py
+    Score: 0.3400
+    Signals: {"symbol": 0.4, "dependency": 0.1, "semantic": 0.2, "intent": 0.5, "role": 0.5, "path": 1.0}
