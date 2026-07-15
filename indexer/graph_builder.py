@@ -29,6 +29,10 @@ class DependencyGraph:
             else:
                 module_name = clean_path.replace('/', '.')
                 
+            # Priority 2 Fix: Handle src-layout (e.g. src/requests/...)
+            if module_name.startswith("src."):
+                module_name = module_name[4:]
+                
             module_to_path[module_name] = meta.filepath
             
             for symbol in meta.symbols:

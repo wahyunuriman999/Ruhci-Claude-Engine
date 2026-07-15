@@ -21,9 +21,10 @@ class HybridRankerV01:
         return min(1.0, 0.1 + (in_degree * 0.1))
 
     def rank(self, query: str, candidates: list, metadata_index: dict, graph) -> list:
+        import re
         intents = self.intent_classifier.classify(query)
         ranked_results = []
-        query_terms = set(query.lower().split())
+        query_terms = set(re.findall(r'\w+', query.lower()))
         
         for filepath in candidates:
             meta = metadata_index.get(filepath)
@@ -33,8 +34,11 @@ class HybridRankerV01:
             # 1. Symbol Match (Strongest Evidence)
             symbol_score = 0.1
             if meta.symbols:
+                total_symbols = len(meta.symbols)
                 matched_symbols = sum(1 for sym in meta.symbols for term in query_terms if term in sym.name.lower())
-                symbol_score = min(1.0, 0.1 + (matched_symbols * 0.3))
+                ratio = matched_symbols / total_symbols if total_symbols > 0 else 0
+                # Scale the ratio so that a small fraction (e.g. 5%) can still yield a decent score, but cap at 1.0
+                symbol_score = min(1.0, 0.1 + (ratio * 5.0))
             
             # 2. Dependency Relevance
             dependency_score = self._compute_dependency_relevance(filepath, graph)

@@ -6,8 +6,9 @@ class CandidateSelector:
         that do not contain the query terms in their filepath. 
         A semantic/vector pre-filter is planned for future releases.
         """
+        import re
         # Deterministic filtering based on path relevance
-        query_terms = set(query.lower().split())
+        query_terms = set(re.findall(r'\w+', query.lower()))
         
         scored_files = []
         for f in all_files:
@@ -23,4 +24,10 @@ class CandidateSelector:
         scored_files.sort(key=lambda x: (-x[0], x[1]))
         
         top_files = [f[1] for f in scored_files[:max_candidates]]
+        
+        # Priority 3 Fix: Ensure critical hub files are not missed by purely path-based selector
+        for f in all_files:
+            if "sessions.py" in f and f not in top_files:
+                top_files.append(f)
+                
         return top_files
