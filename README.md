@@ -1,26 +1,54 @@
-# Ruhci-Claude Engine ⭐⭐⭐⭐⭐
-**The Claude Optimization Engine**
+# Ruhci (Research Preview v0.1)
+**Deterministic Context Intelligence Engine for AI Coding Agents**
 
-Ruhci-Claude Engine is a Claude Optimization Engine. It optimizes context, prompts, repositories, token usage, caching, memory, and tool orchestration so applications using Claude API become faster, cheaper, and more accurate than calling Claude directly.
+AI coding agents are powerful. But software repositories contain massive amounts of irrelevant information.
 
-## Claude First Principle
-Claude selalu menjadi reasoning engine. Ruhci tidak menggantikan cara Claude berpikir; Ruhci memastikan Claude menerima konteks terbaik, prompt terbaik, alat terbaik, dan anggaran token terbaik sebelum proses reasoning dimulai.
+Ruhci reduces repository context complexity by identifying, ranking, and compressing high-confidence code evidence before it reaches an AI model.
 
-## Target KPI v1.0
-- **Claude API Calls:** <= 1 per major workflow
-- **Token Reduction:** >= 50%
-- **Cache Hit Rate:** >= 70% pada request berulang
-- **Cost Reduction:** >= 30%
-- **Latency Improvement:** >= 20%
+## Why Ruhci?
 
-*For detailed architecture, see [docs/architecture](docs/architecture).*
-### Golden Benchmark Result
-| Metric | Claude Native | Claude + Ruhci | Impact |
-|---|---|---|---|
-| Average Input Tokens | 31245 | 11820 | **62.1% Saved** |
-| Average Cost | $0.83 | $0.31 | **62.6% Saved** |
-| Average Latency | 12.4 s | 8.9 s | **28.2% Faster** |
-| Quality | 100% | 95.2% | **95.2% Retained** |
-| API Calls | 3 | 1 | - |
-| Relevant Context | N/A | 94.0% | - |
+**Without Ruhci:**
+```
+Repository (500,000 tokens) 
+        |
+        v
+       LLM
+```
 
+**With Ruhci:**
+```
+Repository
+        |
+        v
+Ruhci Intelligence Engine
+        |
+        v
+Relevant Context (8,000 tokens)
+        |
+        v
+       LLM
+```
+
+## Core Features
+- **Deterministic Retrieval**: Prioritizes strict AST-based symbol evidence over fuzzy semantic matching.
+- **Hybrid Ranking**: Fuses dependency graphs, intent classification, and semantic paths into a mathematically sound rank.
+- **Confidence Pruning**: Aggressively eliminates context noise via dynamic thresholding and dependency lock rules.
+
+## Benchmark Results (Real API Simulation)
+Tested on 25 complex engineering queries across 5 major repositories (FastAPI, Requests, Flask, Django, SQLAlchemy) using Claude 3.5 Sonnet:
+- **Token Reduction**: 92.1% (Net)
+- **Cost Reduction**: 92.1% (Net)
+- **Context Sufficiency**: 100.0% (Quality equal to Native)
+- **Regression Failure**: 0
+
+*Read the full [Scientific Evaluation Report](docs/scientific_report_v1.0.md).*
+
+## Current Limitations
+To ensure transparency, we disclose the following limitations:
+- **Language Coverage**: Current implementation focuses on languages with strong static analysis capabilities.
+- **Dynamic Behavior**: Runtime-generated code, reflection, and highly dynamic patterns may reduce analysis accuracy.
+- **Framework Knowledge**: Performance may vary depending on framework-specific patterns.
+- **Repository Scale**: Large-scale repositories may require incremental indexing strategies.
+
+## Getting Started
+View the [Reproducibility Guide](docs/reproduce_results.md) to run the benchmark pipeline locally.\n
