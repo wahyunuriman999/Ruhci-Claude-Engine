@@ -1,20 +1,31 @@
 {
+    "id": "requests_timeout_001",
     "repository": "Requests",
     "task": "Add timeout to all session requests",
     "query": "How do I globally set a timeout for the entire requests.Session?",
-    "gold_files": [
+    "primary_file": "requests/sessions.py",
+    "required_files": [
+        "requests/sessions.py"
+    ],
+    "supporting_files": [
+        "requests/adapters.py",
+        "requests/models.py"
+    ],
+    "forbidden_files": [
+        "requests/exceptions.py",
+        "requests/status_codes.py"
+    ],
+    "required_symbols": [
+        "Session",
+        "request"
+    ],
+    "supporting_symbols": [
+        "Timeout",
+        "send"
+    ],
+    "expected_rank": [
         "requests/sessions.py",
         "requests/adapters.py"
     ],
-    "acceptable_files": [
-        "requests/api.py"
-    ],
-    "forbidden_files": [
-        "requests/exceptions.py"
-    ],
-    "expected_symbols": [
-        "Session",
-        "Timeout"
-    ],
-    "difficulty": "hard"
+    "notes": "requests.Session does not natively support a global timeout attribute; it must be passed in the request call or overridden."
 }
