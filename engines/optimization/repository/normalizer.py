@@ -1,10 +1,3 @@
-# ==========================================
-# RUHCI-CLAUDE ENGINE
-# Open Source AI Engineering Engine
-# Copyright (c) 2024-2026 Wahyu Nur Iman. 
-# All rights reserved.
-# ==========================================
-
 import time
 import uuid
 from typing import List
@@ -17,23 +10,34 @@ class Normalizer:
             evidence = Evidence(
                 type="AST_Node",
                 source=raw["path"],
-                description=f"Found {raw['type']} '{raw['name']}' at line {raw.get('line', 0)}",
+                description=f"Found {raw['type']} '{raw.get('name')}' at line {raw.get('line', 0)}",
                 confidence=100.0,
                 timestamp=int(time.time())
             )
+            
+            metadata = {
+                "line": raw.get("line"),
+                "decorators": raw.get("decorators", []),
+                "bases": raw.get("bases", []),
+                "returns": raw.get("returns", ""),
+                "calls": raw.get("calls", []),
+                "module": raw.get("module", "")
+            }
+            
+            name = raw.get("name", "unknown")
             record = KnowledgeRecord(
                 id=str(uuid.uuid4()),
                 kind=raw["type"],
                 language="Python",
                 repository=repository_name,
                 path=raw["path"],
-                symbol=raw["name"],
+                symbol=name,
                 signature="",
-                visibility="public" if not raw["name"].startswith("_") else "private",
+                visibility="public" if not name.startswith("_") else "private",
                 relationships=[],
                 importance=50.0,
                 confidence=100.0,
-                metadata={"line": raw.get("line")},
+                metadata=metadata,
                 source="PythonASTSource",
                 evidence=[evidence]
             )
