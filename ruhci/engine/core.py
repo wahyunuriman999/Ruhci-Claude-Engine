@@ -7,6 +7,7 @@ from ruhci.ranking.hybrid_ranker import HybridRankerV02
 class RuhciEngine:
     def __init__(self, target_dir: str):
         self.target_dir = target_dir
+        self.ranker = HybridRankerV02()
 
     def compile_context(self, query: str) -> list[dict]:
         all_files = []
@@ -34,8 +35,7 @@ class RuhciEngine:
         selector = CandidateSelector()
         candidates = selector.select(query, all_files, graph=graph, max_candidates=50)
 
-        ranker = HybridRankerV02()
-        results = ranker.rank(query, candidates, metadata_index, graph)
+        results = self.ranker.rank(query, candidates, metadata_index, graph)
         
         formatted_results = []
         for r in results:

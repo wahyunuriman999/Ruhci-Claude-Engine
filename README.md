@@ -224,15 +224,21 @@ Ruhci is designed to be pipeline-agnostic. You can pipe its output directly into
 - **Continue.dev**
 - **Custom CI/CD Pipelines**
 
-### Using Ruhci with `free-claude-code`
+### Using Ruhci with Free Local/Proxy AI Agents
 
-Ruhci natively integrates with [free-claude-code](https://github.com/Alishahryar1/free-claude-code) to provide a **100% free, zero API cost** context pipeline.
+Ruhci natively provides the `ruhci_ask.py` CLI to bridge its local context pipeline with free AI execution tools.
+
+> **Disclaimer**: The default configuration routes to `free-claude-code`, which is a third-party community proxy. Please review their repository and respect upstream terms of service. Ruhci is pipeline-agnostic and fully supports routing to 100% local agents like Ollama.
 
 1. **Ruhci** filters your massive codebase locally into a few highly relevant files.
-2. The `ruhci_ask.py` CLI bridges this filtered context into `free-claude-code`, which routes the query to free AI models (like Gemini or local Ollama).
+2. The `ruhci_ask.py` CLI bridges this filtered context into your chosen free AI model.
 
 **Execute the complete pipeline locally:**
 ```bash
+# Route to Ollama (100% Local & Free)
+python ruhci_ask.py "How does SSL certificate verification work?" --repo /path/to/repo --agent ollama
+
+# Route to community proxy (Default)
 python ruhci_ask.py "How does SSL certificate verification work?" --repo /path/to/repo
 ```
 

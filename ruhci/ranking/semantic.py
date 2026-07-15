@@ -59,8 +59,8 @@ class ContentAnalyzer:
         for token in content_tokens:
             for term in query_terms:
                 # substring match to handle stemming variations inside the content 
-                # (e.g. term 'cert' matching 'certificate')
-                if term in token:
+                # e.g., term 'certificate' matching token 'certifi' or 'cert'
+                if term in token or (len(token) > 3 and token in term):
                     content_term_counts[term] += 1
 
         matched_terms = sum(1 for term, count in content_term_counts.items() if count > 0)

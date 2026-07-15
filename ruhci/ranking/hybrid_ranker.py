@@ -74,7 +74,7 @@ class HybridRankerV02:
             dependency_score = self._compute_dependency_relevance(filepath, graph)
             
             # THE SEMANTIC GATE: Prevent Dependency Dominance
-            if symbol_score <= 0.1 and semantic_score < 0.4:
+            if symbol_score <= 0.1 and semantic_score < 0.2:
                 dependency_score *= 0.2
             
             # 4. Intent Score
@@ -87,7 +87,7 @@ class HybridRankerV02:
             
             # 6. Path Score
             filename_no_ext = filepath.lower().replace('\\', '/').split('/')[-1].replace('.py', '')
-            path_score = 1.0 if any(term in filepath.lower() or filename_no_ext in term for term in query_terms) else 0.3
+            path_score = 1.0 if any(term in filepath.lower() or term in filename_no_ext for term in query_terms) else 0.3
             
             # Fusion Calculation
             final_score = (
@@ -99,9 +99,13 @@ class HybridRankerV02:
                 (path_score * self.weights["path"])
             )
             
-            # Explicit final penalty for test files
-            if "test" in filepath.lower():
+            # Explicit final penalties
+            filepath_lower = filepath.lower()
+            if "test" in filepath_lower:
                 final_score *= 0.5
+            # Exception Penalty: files solely defining errors shouldn't top logic queries
+            if "exception" in filepath_lower or "error" in filepath_lower:
+                final_score *= 0.4
                 
             ranked_results.append({
                 "file": filepath,
