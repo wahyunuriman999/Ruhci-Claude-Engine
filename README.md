@@ -3,7 +3,7 @@
   <p><strong>Deterministic Context Intelligence Engine</strong></p>
   <p><em>Repository Intelligence Layer for AI Coding Agents</em></p>
 
-  [![Version](https://img.shields.io/badge/version-v0.1_Research_Preview-blue.svg)](#)
+  [![Version](https://img.shields.io/badge/version-v0.3.5_Functional_Research_Preview-blue.svg)](#)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
   [![Status](https://img.shields.io/badge/status-Community_Validation-orange.svg)](#)
 </div>
@@ -133,7 +133,7 @@ In our controlled evaluation (using Claude 3.5 Sonnet at Temperature 0) across 5
       <td align="center"><h3>0</h3>Target Regression Fails</td>
   </tr>
 </table>
-  <p><em>*<strong>DISCLAIMER:</strong> The 92.1% reduction figure and 100% parity are <strong>Simulated Baseline Target Metrics</strong> used to design the evaluation framework during the scaffolding phase. They represent the theoretical maximum efficiency of the architecture, not empirical results of the v0.1 engine running on live repositories. The current release is transitioning to functional AST execution.</em></p>
+  <p><em>*<strong>DISCLAIMER:</strong> The 92.1% reduction figure and 100% parity are <strong>Simulated Baseline Target Metrics</strong> used to design the evaluation framework during the scaffolding phase. They represent the theoretical maximum efficiency of the architecture, not empirical results of the current v0.3.5 engine running on live repositories. The current release has transitioned to functional AST execution and is generating live metrics in the `benchmark/proof` directory.</em></p>
 </div>
 
 | Capability | Native Context (Brute-Force) | Optimized + Ruhci |
@@ -240,10 +240,11 @@ Read our full [Failure Cases Report](docs/failure_cases.md).
 
 ## Roadmap
 
-- [x] **v0.1** - Research Preview & Scientific Benchmark
-- [ ] **v0.2** - Community Validation & Attack Mitigation
-- [ ] **v0.3** - Multi-Language Support (JS/TS, Go, Rust)
-- [ ] **v0.4** - Native IDE Integrations (VS Code, JetBrains)
+- [x] **v0.1** - Research Preview & Scientific Benchmark Model
+- [x] **v0.3** - Functional Research Preview (End-to-End AST Pipeline)
+- [ ] **v0.4** - Vector-Semantic Pre-filtering & Content Search
+- [ ] **v0.5** - Community Validation & Attack Mitigation
+- [ ] **v0.6** - Multi-Language Support (JS/TS, Go, Rust)
 - [ ] **v1.0** - Production Engine
 
 ---
