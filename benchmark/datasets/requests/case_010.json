@@ -1,0 +1,24 @@
+{
+    "id": "requests_case_010",
+    "repository": "Requests",
+    "task": "Negative",
+    "query": "Database migration failure for Requests",
+    "primary_file": "requests/sessions.py",
+    "required_files": [
+        "requests/sessions.py"
+    ],
+    "supporting_files": [
+        "requests/utils.py"
+    ],
+    "forbidden_files": [
+        "requests/database.py",
+        "tests/test_database.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "requests/sessions.py",
+        "requests/utils.py"
+    ]
+}

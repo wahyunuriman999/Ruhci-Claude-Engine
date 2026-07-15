@@ -1,0 +1,24 @@
+{
+    "id": "sqlalchemy_case_008",
+    "repository": "SQLAlchemy",
+    "task": "Negative",
+    "query": "Database migration failure for SQLAlchemy",
+    "primary_file": "sqlalchemy/orm/session.py",
+    "required_files": [
+        "sqlalchemy/orm/session.py"
+    ],
+    "supporting_files": [
+        "sqlalchemy/utils.py"
+    ],
+    "forbidden_files": [
+        "sqlalchemy/database.py",
+        "tests/test_database.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "sqlalchemy/orm/session.py",
+        "sqlalchemy/utils.py"
+    ]
+}

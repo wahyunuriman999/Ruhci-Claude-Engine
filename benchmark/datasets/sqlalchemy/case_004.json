@@ -1,0 +1,23 @@
+{
+    "id": "sqlalchemy_case_004",
+    "repository": "SQLAlchemy",
+    "task": "Ambiguous",
+    "query": "Fix SQLAlchemy complex ambiguous issue",
+    "primary_file": "sqlalchemy/orm/session.py",
+    "required_files": [
+        "sqlalchemy/orm/session.py"
+    ],
+    "supporting_files": [
+        "sqlalchemy/utils.py"
+    ],
+    "forbidden_files": [
+        "sqlalchemy/test_ambiguous.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "sqlalchemy/orm/session.py",
+        "sqlalchemy/utils.py"
+    ]
+}

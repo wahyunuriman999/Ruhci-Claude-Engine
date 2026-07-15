@@ -1,0 +1,23 @@
+{
+    "id": "django_case_001",
+    "repository": "Django",
+    "task": "Easy",
+    "query": "Fix Django basic issue",
+    "primary_file": "django/db/models/query.py",
+    "required_files": [
+        "django/db/models/query.py"
+    ],
+    "supporting_files": [
+        "django/utils.py"
+    ],
+    "forbidden_files": [
+        "django/random_test.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "django/db/models/query.py",
+        "django/utils.py"
+    ]
+}

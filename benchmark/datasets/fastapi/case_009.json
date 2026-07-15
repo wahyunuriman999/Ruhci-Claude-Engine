@@ -1,0 +1,24 @@
+{
+    "id": "fastapi_case_009",
+    "repository": "FastAPI",
+    "task": "Negative",
+    "query": "Database migration failure for FastAPI",
+    "primary_file": "fastapi/security/oauth2.py",
+    "required_files": [
+        "fastapi/security/oauth2.py"
+    ],
+    "supporting_files": [
+        "fastapi/utils.py"
+    ],
+    "forbidden_files": [
+        "fastapi/database.py",
+        "tests/test_database.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "fastapi/security/oauth2.py",
+        "fastapi/utils.py"
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "id": "requests_case_003",
+    "repository": "Requests",
+    "task": "Easy",
+    "query": "Fix Requests basic issue",
+    "primary_file": "requests/sessions.py",
+    "required_files": [
+        "requests/sessions.py"
+    ],
+    "supporting_files": [
+        "requests/utils.py"
+    ],
+    "forbidden_files": [
+        "requests/random_test.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "requests/sessions.py",
+        "requests/utils.py"
+    ]
+}

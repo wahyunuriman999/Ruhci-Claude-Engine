@@ -1,0 +1,23 @@
+{
+    "id": "flask_case_007",
+    "repository": "Flask",
+    "task": "Ambiguous",
+    "query": "Fix Flask complex ambiguous issue",
+    "primary_file": "flask/app.py",
+    "required_files": [
+        "flask/app.py"
+    ],
+    "supporting_files": [
+        "flask/utils.py"
+    ],
+    "forbidden_files": [
+        "flask/test_ambiguous.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "flask/app.py",
+        "flask/utils.py"
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "id": "flask_case_003",
+    "repository": "Flask",
+    "task": "Easy",
+    "query": "Fix Flask basic issue",
+    "primary_file": "flask/app.py",
+    "required_files": [
+        "flask/app.py"
+    ],
+    "supporting_files": [
+        "flask/utils.py"
+    ],
+    "forbidden_files": [
+        "flask/random_test.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "flask/app.py",
+        "flask/utils.py"
+    ]
+}

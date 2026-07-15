@@ -1,0 +1,24 @@
+{
+    "id": "django_case_008",
+    "repository": "Django",
+    "task": "Negative",
+    "query": "Database migration failure for Django",
+    "primary_file": "django/db/models/query.py",
+    "required_files": [
+        "django/db/models/query.py"
+    ],
+    "supporting_files": [
+        "django/utils.py"
+    ],
+    "forbidden_files": [
+        "django/database.py",
+        "tests/test_database.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "django/db/models/query.py",
+        "django/utils.py"
+    ]
+}

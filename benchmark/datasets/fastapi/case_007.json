@@ -1,0 +1,23 @@
+{
+    "id": "fastapi_case_007",
+    "repository": "FastAPI",
+    "task": "Ambiguous",
+    "query": "Fix FastAPI complex ambiguous issue",
+    "primary_file": "fastapi/security/oauth2.py",
+    "required_files": [
+        "fastapi/security/oauth2.py"
+    ],
+    "supporting_files": [
+        "fastapi/utils.py"
+    ],
+    "forbidden_files": [
+        "fastapi/test_ambiguous.py"
+    ],
+    "required_symbols": [
+        "main_class"
+    ],
+    "expected_rank": [
+        "fastapi/security/oauth2.py",
+        "fastapi/utils.py"
+    ]
+}
