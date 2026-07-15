@@ -13,33 +13,45 @@ class HybridRankerV01:
             "path": 0.05
         }
 
-    def _compute_dependency_relevance(self, filepath: str, query_alignment: float) -> float:
-        centrality = 1.0 if "utils" in filepath or "middleware" in filepath else 0.5
-        return centrality * query_alignment
+    def _compute_dependency_relevance(self, filepath: str, graph) -> float:
+        if not graph or not graph.graph.has_node(filepath):
+            return 0.1
+        # Simple centrality based on in-degree in the dependency graph
+        in_degree = graph.graph.in_degree(filepath)
+        return min(1.0, 0.1 + (in_degree * 0.1))
 
-    def rank(self, query: str, candidates: list, required_symbols: list) -> list:
+    def rank(self, query: str, candidates: list, metadata_index: dict, graph) -> list:
         intents = self.intent_classifier.classify(query)
         ranked_results = []
+        query_terms = set(query.lower().split())
         
         for filepath in candidates:
+            meta = metadata_index.get(filepath)
+            if not meta:
+                continue
+                
             # 1. Symbol Match (Strongest Evidence)
-            symbol_score = 1.0 if filepath in ["fastapi/security/oauth2.py", "requests/sessions.py", "flask/app.py", "django/db/models/query.py", "sqlalchemy/orm/session.py"] else 0.1
+            symbol_score = 0.1
+            if meta.symbols:
+                matched_symbols = sum(1 for sym in meta.symbols for term in query_terms if term in sym.name.lower())
+                symbol_score = min(1.0, 0.1 + (matched_symbols * 0.3))
             
             # 2. Dependency Relevance
-            semantic_align = 0.9 if "oauth2.py" in filepath or "sessions.py" in filepath else 0.5
-            dependency_score = self._compute_dependency_relevance(filepath, query_alignment=semantic_align)
+            dependency_score = self._compute_dependency_relevance(filepath, graph)
             
-            # 3. Semantic Similarity
-            semantic_score = semantic_align
+            # 3. Semantic Similarity (Mocked with path overlap for now)
+            semantic_score = min(1.0, sum(1 for term in query_terms if term in filepath.lower()) * 0.2)
             
             # 4. Intent Score
             intent_score = 1.0 if self.intent_classifier.get_role_boost(intents, filepath) > 1.0 else 0.5
             
             # 5. Role Score
-            role_score = 1.0 if filepath in ["fastapi/security/oauth2.py", "requests/sessions.py", "flask/app.py", "django/db/models/query.py", "sqlalchemy/orm/session.py"] else 0.5
+            role_score = 0.5
+            if "utils" in filepath or "core" in filepath or "security" in filepath:
+                role_score = 0.8
             
             # 6. Path Score
-            path_score = 1.0 if any(term in filepath for term in query.lower().split()) else 0.3
+            path_score = 1.0 if any(term in filepath.lower() for term in query_terms) else 0.3
             
             # FUSION
             final_score = (

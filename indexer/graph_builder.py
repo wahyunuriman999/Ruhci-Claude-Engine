@@ -16,12 +16,37 @@ class DependencyGraph:
         
     def build_from_metadata(self, metadatas: List[FileMetadata]):
         logger.info("Building Dependency Graph...")
+        
+        module_to_path = {}
+        # Pass 1: Build nodes and module mapping
         for meta in metadatas:
             self.graph.add_node(meta.filepath, type="file")
+            
+            # Create a module path
+            clean_path = meta.filepath.replace('\\', '/').replace('.py', '')
+            if clean_path.endswith('/__init__'):
+                module_name = clean_path[:-9].replace('/', '.')
+            else:
+                module_name = clean_path.replace('/', '.')
+                
+            module_to_path[module_name] = meta.filepath
+            
             for symbol in meta.symbols:
                 node_id = f"{meta.filepath}::{symbol.name}"
                 self.graph.add_node(node_id, type=symbol.symbol_type)
                 self.graph.add_edge(meta.filepath, node_id, relation="contains")
+                
+        # Pass 2: Resolve imports to create file-to-file edges
+        for meta in metadatas:
+            for imp in meta.imports:
+                target_path = module_to_path.get(imp)
+                if target_path and target_path != meta.filepath:
+                    self.graph.add_edge(meta.filepath, target_path, relation="imports")
+                else:
+                    # Prefix matching for submodule imports
+                    for mod, path in module_to_path.items():
+                        if path != meta.filepath and (imp.startswith(mod) or mod.startswith(imp)):
+                            self.graph.add_edge(meta.filepath, path, relation="imports")
                 
         logger.info(f"Graph built with {self.graph.number_of_nodes()} nodes and {self.graph.number_of_edges()} edges.")
         

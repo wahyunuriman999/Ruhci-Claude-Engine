@@ -1,45 +1,73 @@
-import time
+import os
 import sys
+from indexer.ast_parser import ASTParser
+from indexer.graph_builder import DependencyGraph
+from ruhci.engine.candidate.selector import CandidateSelector
+from ruhci.ranking.hybrid_ranker import HybridRankerV01
 
-print("Initializing Ruhci Demo Engine [Research Preview v0.1]...")
-time.sleep(1)
+def main():
+    print("Initializing Ruhci Demo Engine [Functional Research Preview]...")
+    target_repo = "."
+    query = "implement recursive AST traversal and rewrite hybrid ranker logic"
+    
+    print(f"\n[Target Repository]: {target_repo} (Self-scan)")
+    print(f"[Query]: {query}")
+    
+    print("\n[+] Executing Ruhci Intelligence Pipeline...")
+    
+    # 1. Scan files
+    print(" -> Scanning Python files...")
+    all_files = []
+    for root, dirs, files in os.walk(target_repo):
+        # Exclude common noisy directories
+        if any(ignored in root for ignored in ["venv", ".git", "__pycache__", "node_modules", "scratch"]):
+            continue
+        for file in files:
+            if file.endswith(".py"):
+                # Use forward slashes for consistency
+                filepath = os.path.join(root, file).replace('\\', '/')
+                if filepath.startswith("./"):
+                    filepath = filepath[2:]
+                all_files.append(filepath)
+                
+    # 2. AST Parse
+    print(f" -> Parsing AST and extracting symbols for {len(all_files)} files...")
+    parser = ASTParser()
+    metadatas = []
+    metadata_index = {}
+    for f in all_files:
+        meta = parser.parse_python_file(f)
+        metadatas.append(meta)
+        metadata_index[f] = meta
+        
+    # 3. Graph
+    print(" -> Constructing Repository Dependency Graph...")
+    graph = DependencyGraph()
+    graph.build_from_metadata(metadatas)
+    
+    # 4. Selector
+    print(f" -> Filtering {len(all_files)} Candidates...")
+    selector = CandidateSelector()
+    candidates = selector.select(query, all_files, max_candidates=50)
+    print(f"    Selected {len(candidates)} candidates for deep ranking.")
+    
+    # 5. Ranker
+    print(" -> Executing Hybrid Ranking Engine (Symbol + Dependency + Semantic)...")
+    ranker = HybridRankerV01()
+    results = ranker.rank(query, candidates, metadata_index, graph)
+    
+    print("\n==================================================")
+    print(" RUHCI OPTIMIZED CONTEXT RESULTS (REAL EXECUTION)")
+    print("==================================================")
+    print("Selected Evidence Files:")
+    if not results:
+        print(" [!] No files found matching the criteria.")
+        
+    for i, res in enumerate(results[:5]):
+        print(f" [{i+1}] {res['file']} (Score: {res['score']:.4f})")
+        print(f"      Signals: Symbol({res['signals']['symbol']:.2f}) Dep({res['signals']['dependency']:.2f}) Sem({res['signals']['semantic']:.2f})")
+        
+    print("\n[System] Context successfully compiled. Ready for LLM ingestion.")
 
-print("\n[Target Repository]: FastAPI (tiangolo/fastapi)")
-print("[Query]: Fix JWT refresh token expiration bug in the authentication middleware")
-
-print("\n[+] Executing Ruhci Intelligence Pipeline...")
-time.sleep(1.5)
-
-print(" -> Parsing AST and extracting symbols...")
-time.sleep(1.0)
-print(" -> Constructing Repository Dependency Graph...")
-time.sleep(1.0)
-
-print("\n[!] WARNING: Dynamic import detected in `fastapi/plugins/__init__.py`")
-print("    Confidence reduced. Static analysis cannot prove runtime plugin dependency.")
-time.sleep(1.0)
-
-print("\n -> Executing Hybrid Ranking Engine (Symbol + Dependency + Semantic)...")
-time.sleep(1.0)
-print(" -> Applying Context Pruner (Dynamic Thresholding & Cascade Gap)...")
-time.sleep(1.0)
-
-print("\n==================================================")
-print(" RUHCI OPTIMIZED CONTEXT RESULTS")
-print("==================================================")
-print("Selected Evidence Files:")
-print(" [✓] fastapi/security/oauth2.py               (Confidence: 0.98 - High)")
-print("      Reason: Matches symbols 'verify_token', 'refresh', 'jwt'")
-print(" [✓] fastapi/security/utils.py                (Confidence: 0.85 - High)")
-print("      Reason: Direct dependency of oauth2.py")
-print(" [✓] starlette/middleware/authentication.py   (Confidence: 0.81 - High)")
-print("      Reason: Matches intent 'authentication middleware'")
-print(" [?] fastapi/plugins/auth_provider.py         (Confidence: 0.42 - Low)")
-print("      Reason: Appended as safety fallback due to dynamic import warning.")
-
-print("\nPerformance Metrics:")
-print(" - Original Repository Tokens : ~280,000")
-print(" - Ruhci Optimized Tokens     : ~3,850")
-print(" - Net Token Reduction        : 98.62% (Controlled Benchmark Avg: 92.1%)")
-
-print("\n[System] Context successfully compiled. Ready for LLM ingestion.")
+if __name__ == "__main__":
+    main()

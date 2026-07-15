@@ -33,29 +33,42 @@ class ASTParser:
             
             symbols = []
             imports = []
+            content_bytes = bytes(content, "utf8")
             
-            # Simple traversal stub for finding classes and functions
-            for child in root_node.children:
-                if child.type == "class_definition":
-                    name_node = child.child_by_field_name("name")
+            def traverse(node):
+                if node.type == "class_definition":
+                    name_node = node.child_by_field_name("name")
                     if name_node:
+                        name = content_bytes[name_node.start_byte:name_node.end_byte].decode("utf8", errors="ignore")
                         symbols.append(CodeSymbol(
-                            name=content[name_node.start_byte:name_node.end_byte],
+                            name=name,
                             symbol_type="class",
-                            start_line=child.start_point[0] + 1,
-                            end_line=child.end_point[0] + 1
+                            start_line=node.start_point[0] + 1,
+                            end_line=node.end_point[0] + 1
                         ))
-                elif child.type == "function_definition":
-                    name_node = child.child_by_field_name("name")
+                elif node.type == "function_definition":
+                    name_node = node.child_by_field_name("name")
                     if name_node:
+                        name = content_bytes[name_node.start_byte:name_node.end_byte].decode("utf8", errors="ignore")
                         symbols.append(CodeSymbol(
-                            name=content[name_node.start_byte:name_node.end_byte],
+                            name=name,
                             symbol_type="function",
-                            start_line=child.start_point[0] + 1,
-                            end_line=child.end_point[0] + 1
+                            start_line=node.start_point[0] + 1,
+                            end_line=node.end_point[0] + 1
                         ))
-                elif child.type in ["import_statement", "import_from_statement"]:
-                    imports.append(content[child.start_byte:child.end_byte])
+                elif node.type == "import_statement":
+                    for child in node.children:
+                        if child.type == "dotted_name":
+                            imports.append(content_bytes[child.start_byte:child.end_byte].decode("utf8", errors="ignore"))
+                elif node.type == "import_from_statement":
+                    module_node = node.child_by_field_name("module_name")
+                    if module_node:
+                        imports.append(content_bytes[module_node.start_byte:module_node.end_byte].decode("utf8", errors="ignore"))
+                
+                for child in node.children:
+                    traverse(child)
+                    
+            traverse(root_node)
             
             return FileMetadata(
                 filepath=filepath, 
