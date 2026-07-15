@@ -42,8 +42,23 @@ class DependencyGraph:
                 
         # Pass 2: Resolve imports to create file-to-file edges
         for meta in metadatas:
+            current_module = meta.filepath.replace('\\', '/').replace('.py', '')
+            if current_module.endswith('/__init__'):
+                current_module = current_module[:-9]
+            if current_module.startswith("src/"):
+                current_module = current_module[4:]
+            current_module = current_module.replace('/', '.')
+
             for imp in meta.imports:
-                target_path = module_to_path.get(imp)
+                if imp.startswith('.'):
+                    parts = current_module.split('.')
+                    dots = len(imp) - len(imp.lstrip('.'))
+                    parent = '.'.join(parts[:-dots]) if dots <= len(parts) else ''
+                    resolved_imp = parent + '.' + imp.lstrip('.') if parent else imp.lstrip('.')
+                else:
+                    resolved_imp = imp
+
+                target_path = module_to_path.get(resolved_imp)
                 if target_path and target_path != meta.filepath:
                     self.graph.add_edge(meta.filepath, target_path, relation="imports")
                 else:

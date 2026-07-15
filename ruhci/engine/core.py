@@ -2,7 +2,7 @@ import os
 from indexer.ast_parser import ASTParser
 from indexer.graph_builder import DependencyGraph
 from ruhci.engine.candidate.selector import CandidateSelector
-from ruhci.ranking.hybrid_ranker import HybridRankerV01
+from ruhci.ranking.hybrid_ranker import HybridRankerV02
 
 class RuhciEngine:
     def __init__(self, target_dir: str):
@@ -34,7 +34,7 @@ class RuhciEngine:
         selector = CandidateSelector()
         candidates = selector.select(query, all_files, graph=graph, max_candidates=50)
 
-        ranker = HybridRankerV01()
+        ranker = HybridRankerV02()
         results = ranker.rank(query, candidates, metadata_index, graph)
         
         formatted_results = []

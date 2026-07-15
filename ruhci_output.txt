@@ -1,0 +1,19 @@
+Query: How does SSL certificate verification work?
+
+Here are the most relevant files from the repository:
+
+--- FILE: requests_clone\src\requests\exceptions.py ---
+```python
+<unreadable binary or missing file>
+```
+
+--- FILE: requests_clone\src\requests\adapters.py ---
+```python
+<unreadable binary or missing file>
+```
+
+--- FILE: requests_clone\src\requests\sessions.py ---
+```python
+<unreadable binary or missing file>
+```
+

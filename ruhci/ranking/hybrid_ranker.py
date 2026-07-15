@@ -1,19 +1,21 @@
 from ruhci.ranking.intent import QueryIntentClassifier
+from ruhci.ranking.semantic import ContentAnalyzer
+import re
 
-class HybridRankerV01:
+class HybridRankerV02:
     """
-    V0.3 Hybrid Ranker. Combines multiple signals for final ranking.
+    V0.4 Hybrid Ranker (Vector-Semantic Search Preview).
+    Combines multiple signals for final ranking.
     
-    LIMITATIONS (v0.3 Roadmap for v0.4):
-    1. Blind to Content: Files without top-level AST symbols (e.g., config files, certs.py) 
-       will receive zero symbol score. Ranking relies purely on AST structure. Future versions 
-       should incorporate content-based semantic matching (TF-IDF/Vector embeddings).
-    2. Dependency Dominance: High in-degree files (e.g., models.py) can dominate the ranking 
-       because dependency score carries heavy weight (0.25). Future versions should cross-validate 
-       structural centrality with semantic relevance to prevent false positives.
+    Resolved Limitations from v0.3:
+    1. Blind to Content: Now uses `ContentAnalyzer` (TF-IDF/Term Frequency) to give 
+       semantic scores to files with zero AST symbols (e.g. certs.py).
+    2. Dependency Dominance: Implemented Semantic Gate. High in-degree files (models.py) 
+       are penalized if they do not possess any symbol or semantic relevance to the query.
     """
     def __init__(self):
         self.intent_classifier = QueryIntentClassifier()
+        self.content_analyzer = ContentAnalyzer()
         # Updated Guardrail Weights
         self.weights = {
             "symbol": 0.40,
@@ -32,12 +34,18 @@ class HybridRankerV01:
         return min(1.0, 0.1 + (in_degree * 0.1))
 
     def rank(self, query: str, candidates: list, metadata_index: dict, graph) -> list:
-        import re
-        
         # Word tokenization for query terms (ignore punctuation) with safe stemming
         raw_terms = set(re.findall(r'\w+', query.lower()))
-        exceptions = {"does", "status", "utils", "this", "is", "has", "was", "as", "its", "us", "analysis", "process", "access"}
-        query_terms = {t[:-1] if t.endswith('s') and not t.endswith('ss') and t not in exceptions and len(t) > 3 else t for t in raw_terms}
+        stopwords = {"how", "does", "work", "what", "where", "why", "who", "when", "is", "are", "am", "be", "been", "being", "have", "has", "had", "do", "did", "and", "or", "but", "if", "for", "in", "of", "to", "with", "on", "by", "this", "that", "it", "its", "us", "a", "an", "the"}
+        exceptions = {"status", "utils", "analysis", "process", "access"}
+        
+        query_terms = set()
+        for t in raw_terms:
+            if t in stopwords: continue
+            if t.endswith('s') and not t.endswith('ss') and t not in exceptions:
+                t = t[:-1]
+            if len(t) > 2:
+                query_terms.add(t)
         
         intents = self.intent_classifier.classify(query)
         ranked_results = []
@@ -58,8 +66,16 @@ class HybridRankerV01:
                 ratio = len(matched_terms) / len(query_terms) if query_terms else 0
                 symbol_score = min(1.0, 0.1 + (ratio * 0.9))
             
-            # 2. Dependency Relevance
+            # 2. Semantic Similarity (Content-based via TF-IDF emulation)
+            # Replaces the mock path-based semantic score from v0.3
+            semantic_score = self.content_analyzer.analyze(filepath, query_terms)
+            
+            # 3. Dependency Relevance
             dependency_score = self._compute_dependency_relevance(filepath, graph)
+            
+            # THE SEMANTIC GATE: Prevent Dependency Dominance
+            if symbol_score <= 0.1 and semantic_score < 0.4:
+                dependency_score *= 0.2
             
             # 4. Intent Score
             intent_score = 1.0 if self.intent_classifier.get_role_boost(intents, filepath) > 1.0 else 0.5
@@ -70,12 +86,10 @@ class HybridRankerV01:
                 role_score = 0.8
             
             # 6. Path Score
-            path_score = 1.0 if any(term in filepath.lower() for term in query_terms) else 0.3
+            filename_no_ext = filepath.lower().replace('\\', '/').split('/')[-1].replace('.py', '')
+            path_score = 1.0 if any(term in filepath.lower() or filename_no_ext in term for term in query_terms) else 0.3
             
-            # 3. Semantic Similarity (Mocked with path overlap for now)
-            filename = filepath.lower().replace('\\', '/').split('/')[-1]
-            matched_path_terms = sum(1 for term in query_terms if term in filename)
-            semantic_score = min(1.0, matched_path_terms * 0.5)
+            # Fusion Calculation
             final_score = (
                 (symbol_score * self.weights["symbol"]) +
                 (dependency_score * self.weights["dependency"]) +

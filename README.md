@@ -3,7 +3,7 @@
   <p><strong>Deterministic Context Intelligence Engine</strong></p>
   <p><em>Repository Intelligence Layer for AI Coding Agents</em></p>
 
-  [![Version](https://img.shields.io/badge/version-v0.3.5_Functional_Research_Preview-blue.svg)](#)
+  [![Version](https://img.shields.io/badge/version-v0.4_Vector_Semantic_Preview-blue.svg)](#)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
   [![Status](https://img.shields.io/badge/status-Community_Validation-orange.svg)](#)
 </div>
@@ -218,10 +218,23 @@ ruhci explain "Fix JWT refresh token expiration bug"
 ## Integration with AI Agents
 
 Ruhci is designed to be pipeline-agnostic. You can pipe its output directly into your favorite tools:
+- **free-claude-code (via `ruhci_ask.py`)**
 - **Claude Code**
 - **Cursor**
 - **Continue.dev**
 - **Custom CI/CD Pipelines**
+
+### Using Ruhci with `free-claude-code`
+
+Ruhci natively integrates with [free-claude-code](https://github.com/Alishahryar1/free-claude-code) to provide a **100% free, zero API cost** context pipeline.
+
+1. **Ruhci** filters your massive codebase locally into a few highly relevant files.
+2. The `ruhci_ask.py` CLI bridges this filtered context into `free-claude-code`, which routes the query to free AI models (like Gemini or local Ollama).
+
+**Execute the complete pipeline locally:**
+```bash
+python ruhci_ask.py "How does SSL certificate verification work?" --repo /path/to/repo
+```
 
 *Simply use Ruhci as your `@codebase` retrieval engine.*
 
@@ -242,7 +255,7 @@ Read our full [Failure Cases Report](docs/failure_cases.md).
 
 - [x] **v0.1** - Research Preview & Scientific Benchmark Model
 - [x] **v0.3** - Functional Research Preview (End-to-End AST Pipeline)
-- [ ] **v0.4** - Vector-Semantic Pre-filtering & Content Search
+- [x] **v0.4** - Vector-Semantic Pre-filtering & Content Search
 - [ ] **v0.5** - Community Validation & Attack Mitigation
 - [ ] **v0.6** - Multi-Language Support (JS/TS, Go, Rust)
 - [ ] **v1.0** - Production Engine

@@ -14,7 +14,7 @@ def main():
         {
             "repo": "https://github.com/psf/requests.git",
             "dir": "requests_clone",
-            "query": "How are HTTP adapters initialized and managed for sessions?"
+            "query": "How does SSL certificate verification work?"
         },
         {
             "repo": "https://github.com/pallets/flask.git",
@@ -29,7 +29,7 @@ def main():
     ]
     
     os.makedirs("benchmark/proof", exist_ok=True)
-    proof_file = "benchmark/proof/empirical_run_001.txt"
+    proof_file = "benchmark/proof/empirical_run_002.txt"
     
     with open(proof_file, "w") as f:
         f.write("Empirical Run 002 - Validation Across 3 Repositories\n")

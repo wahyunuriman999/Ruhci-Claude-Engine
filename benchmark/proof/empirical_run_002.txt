@@ -1,0 +1,63 @@
+Empirical Run 002 - Validation Across 3 Repositories
+========================================================
+
+Target Repository: requests_clone
+Query: How does SSL certificate verification work?
+----------------------------------------
+[1] File: requests_clone\src\requests\exceptions.py
+    Score: 0.4217
+    Signals: {'symbol': 0.4, 'dependency': 0.5, 'semantic': 0.3111111111111111, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[2] File: requests_clone\src\requests\adapters.py
+    Score: 0.3150
+    Signals: {'symbol': 0.1, 'dependency': 0.30000000000000004, 'semantic': 0.7333333333333334, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[3] File: requests_clone\src\requests\sessions.py
+    Score: 0.3050
+    Signals: {'symbol': 0.1, 'dependency': 0.1, 'semantic': 1.0, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[4] File: requests_clone\tests\test_requests.py
+    Score: 0.2525
+    Signals: {'symbol': 0.7, 'dependency': 0.1, 'semantic': 0.7333333333333334, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[5] File: requests_clone\src\requests\api.py
+    Score: 0.2417
+    Signals: {'symbol': 0.1, 'dependency': 0.1, 'semantic': 0.5777777777777777, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+
+
+Target Repository: flask_clone
+Query: How is the application context managed and pushed to the stack?
+----------------------------------------
+[1] File: flask_clone\src\flask\globals.py
+    Score: 0.5540
+    Signals: {'symbol': 0.28, 'dependency': 1.0, 'semantic': 0.6799999999999999, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[2] File: flask_clone\src\flask\sansio\app.py
+    Score: 0.5150
+    Signals: {'symbol': 0.28, 'dependency': 0.8, 'semantic': 0.52, 'intent': 0.5, 'role': 0.5, 'path': 1.0}
+[3] File: flask_clone\src\flask\app.py
+    Score: 0.5130
+    Signals: {'symbol': 0.28, 'dependency': 0.6, 'semantic': 0.8400000000000001, 'intent': 0.5, 'role': 0.5, 'path': 1.0}
+[4] File: flask_clone\src\flask\helpers.py
+    Score: 0.5050
+    Signals: {'symbol': 0.28, 'dependency': 0.9, 'semantic': 0.52, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[5] File: flask_clone\src\flask\sansio\scaffold.py
+    Score: 0.4540
+    Signals: {'symbol': 0.28, 'dependency': 0.6, 'semantic': 0.6799999999999999, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+
+
+Target Repository: urllib3_clone
+Query: How is connection pooling implemented and managed?
+----------------------------------------
+[1] File: urllib3_clone\src\urllib3\connection.py
+    Score: 0.5950
+    Signals: {'symbol': 0.325, 'dependency': 1.0, 'semantic': 0.6000000000000001, 'intent': 0.5, 'role': 0.5, 'path': 1.0}
+[2] File: urllib3_clone\src\urllib3\response.py
+    Score: 0.5600
+    Signals: {'symbol': 0.325, 'dependency': 1.0, 'semantic': 0.6000000000000001, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[3] File: urllib3_clone\src\urllib3\_base_connection.py
+    Score: 0.5525
+    Signals: {'symbol': 0.325, 'dependency': 1.0, 'semantic': 0.3166666666666667, 'intent': 0.5, 'role': 0.5, 'path': 1.0}
+[4] File: urllib3_clone\src\urllib3\exceptions.py
+    Score: 0.5300
+    Signals: {'symbol': 0.325, 'dependency': 1.0, 'semantic': 0.4, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[5] File: urllib3_clone\src\urllib3\connectionpool.py
+    Score: 0.4950
+    Signals: {'symbol': 0.325, 'dependency': 0.6, 'semantic': 0.6000000000000001, 'intent': 0.5, 'role': 0.5, 'path': 1.0}
+
+
