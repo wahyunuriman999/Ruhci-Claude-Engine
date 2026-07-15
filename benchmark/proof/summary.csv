@@ -1,0 +1,16 @@
+Metric,Value
+native_tokens,31245
+ruhci_tokens,11820
+token_saved_pct,62.1
+native_cost,0.83
+ruhci_cost,0.31
+cost_saved_pct,62.6
+native_latency,12.4
+ruhci_latency,8.9
+latency_faster_pct,28.2
+quality_score,95.2
+native_calls,3
+ruhci_calls,1
+relevant_context_pct,94.0
+repository_compression_pct,68.0
+failure_rate_pct,0.0
