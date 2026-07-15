@@ -4,4 +4,4 @@
 # Copyright (c) 2024-2026 Wahyu Nur Iman. 
 # All rights reserved.
 # ==========================================
-from router.registry import UniversalRegistry\ndef test_router():\n    assert 'ToolRouter' in UniversalRegistry._registry['Router']
+from planner.agent import PlanningResult\ndef test_strategy():\n    pr = PlanningResult(objective='x')\n    assert pr.strategy == 'ADAPTIVE'

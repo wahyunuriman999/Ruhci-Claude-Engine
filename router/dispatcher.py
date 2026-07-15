@@ -6,73 +6,69 @@
 # ==========================================
 
 from loguru import logger
-from router.registry import RouterRegistry
+from typing import Dict, Any
+from engine.base import BaseDispatcher
+from router.registry import Registry, UniversalRegistry
 
-class TaskRouter:
-    def __init__(self):
-        logger.info("Initializing Enterprise TaskRouter (Registry Pattern).")
-        
-    def dispatch(self, route_target: str, context: dict) -> Any:
-        handler = RouterRegistry.get_route(route_target)
+class Dispatcher(BaseDispatcher):
+    def dispatch(self, route_target: str, context: Dict[str, Any]) -> Any:
+        handler = UniversalRegistry.get("Router", route_target)
         if not handler:
-            logger.error(f"No handler registered for route: {route_target}")
-            raise ValueError(f"Unknown route: {route_target}")
+            # Fallback to look up in Tool if namespaced
+            if "::" in route_target:
+                cat, name = route_target.split("::", 1)
+                handler = UniversalRegistry.get(cat.replace("Router", ""), name)
             
-        logger.info(f"Dispatching to route: {route_target}")
+        if not handler:
+            raise ValueError(f"No handler registered for route: {route_target}")
+            
+        logger.info(f"Dispatching to: {route_target}")
         return handler(context)
 
-# ==========================================
-# BASE ROUTERS REGISTRATION
-# ==========================================
+# ---------------------------------
+# HIERARCHICAL ROUTERS
+# ---------------------------------
+@Registry.Router("ToolRouter")
+def tool_router(context): return "ToolRouter Executed"
 
-@RouterRegistry.register("FileRouter")
-def file_router(context):
-    return "Handled by FileRouter"
+@Registry.Router("ContextRouter")
+def context_router(context): return "ContextRouter Executed"
 
-@RouterRegistry.register("ToolRouter")
-def tool_router(context):
-    tool = context.get('tool_name')
-    # Can further delegate to specific tool handlers
-    return f"Handled by ToolRouter -> {tool}"
+@Registry.Router("WorkflowRouter")
+def workflow_router(context): return "WorkflowRouter Executed"
 
-@RouterRegistry.register("SkillRouter")
-def skill_router(context):
-    return "Handled by SkillRouter"
+@Registry.Router("SkillRouter")
+def skill_router(context): return "SkillRouter Executed"
 
-@RouterRegistry.register("ContextRouter")
-def context_router(context):
-    return "Handled by ContextRouter"
+@Registry.Router("ValidationRouter")
+def validation_router(context): return "ValidationRouter Executed"
 
-@RouterRegistry.register("MemoryRouter")
-def memory_router(context):
-    return "Handled by MemoryRouter"
+@Registry.Router("MemoryRouter")
+def memory_router(context): return "MemoryRouter Executed"
 
-@RouterRegistry.register("ModelRouter")
-def model_router(context):
-    return "Handled by ModelRouter"
+@Registry.Router("EventRouter")
+def event_router(context): return "EventRouter Executed"
 
-@RouterRegistry.register("PromptRouter")
-def prompt_router(context):
-    return "Handled by PromptRouter"
+@Registry.Router("PluginRouter")
+def plugin_router(context): return "PluginRouter Executed"
 
-@RouterRegistry.register("WorkflowRouter")
-def workflow_router(context):
-    return "Handled by WorkflowRouter"
+# ---------------------------------
+# MINIMAL TOOL STUBS
+# ---------------------------------
+tools = [
+    "bash_execution", "python_execution", "file_read", "file_write", "file_edit",
+    "repository_scan", "directory_scan", "git_operation", "semantic_search",
+    "embedding_search", "grep_search", "vector_search", "documentation_lookup",
+    "package_lookup", "dependency_scan", "test_runner", "lint_runner", "formatter",
+    "security_scan", "benchmark", "profiler", "docker", "terminal",
+    "patch_generation", "patch_validation", "rollback", "commit"
+]
 
-@RouterRegistry.register("RecoveryRouter")
-def recovery_router(context):
-    return "Handled by RecoveryRouter"
+def make_stub(tool_name):
+    @Registry.Tool(tool_name)
+    def stub_func(context):
+        return f"Tool Executed: {tool_name}"
+    return stub_func
 
-@RouterRegistry.register("ValidationRouter")
-def validation_router(context):
-    return "Handled by ValidationRouter"
-
-# Example of registering specific tools under ToolRouter namespace (for v0.1 extensibility)
-@RouterRegistry.register("ToolRouter::bash_execution")
-def bash_tool(context): pass
-
-@RouterRegistry.register("ToolRouter::python_execution")
-def python_tool(context): pass
-
-@RouterRegistry.register("ToolRouter::file_edit")
-def edit_tool(context): pass
+for t in tools:
+    make_stub(t)

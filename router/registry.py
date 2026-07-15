@@ -6,25 +6,47 @@
 # ==========================================
 
 from loguru import logger
-from typing import Callable, Dict, Any
+from typing import Callable, Dict
 
-class RouterRegistry:
-    _routes: Dict[str, Callable] = {}
+class UniversalRegistry:
+    _registry: Dict[str, Dict[str, Callable]] = {
+        "Router": {},
+        "Planner": {},
+        "Skill": {},
+        "Tool": {},
+        "Workflow": {},
+        "Validator": {}
+    }
     
     @classmethod
-    def register(cls, route_name: str):
+    def _register(cls, category: str, name: str):
         def decorator(func: Callable):
-            if route_name in cls._routes:
-                logger.warning(f"Route {route_name} is being overwritten in registry.")
-            cls._routes[route_name] = func
-            logger.debug(f"Registered route: {route_name}")
+            if name in cls._registry[category]:
+                logger.warning(f"{category} '{name}' is being overwritten.")
+            cls._registry[category][name] = func
+            logger.debug(f"Registered {category}: {name}")
             return func
         return decorator
-        
+
     @classmethod
-    def get_route(cls, route_name: str) -> Callable:
-        return cls._routes.get(route_name)
-        
-    @classmethod
-    def list_routes(cls) -> list:
-        return list(cls._routes.keys())
+    def get(cls, category: str, name: str) -> Callable:
+        return cls._registry.get(category, {}).get(name)
+
+class Registry:
+    @staticmethod
+    def Router(name: str): return UniversalRegistry._register("Router", name)
+    
+    @staticmethod
+    def Planner(name: str): return UniversalRegistry._register("Planner", name)
+    
+    @staticmethod
+    def Skill(name: str): return UniversalRegistry._register("Skill", name)
+    
+    @staticmethod
+    def Tool(name: str): return UniversalRegistry._register("Tool", name)
+    
+    @staticmethod
+    def Workflow(name: str): return UniversalRegistry._register("Workflow", name)
+    
+    @staticmethod
+    def Validator(name: str): return UniversalRegistry._register("Validator", name)

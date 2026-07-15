@@ -5,58 +5,50 @@
 # All rights reserved.
 # ==========================================
 
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Dict, Any
 from pydantic import BaseModel, Field
 from loguru import logger
+from engine.base import BasePlanner
 from planner.prompts import PLANNER_SYSTEM_PROMPT
-
-class PlannerStrategy(BaseModel):
-    mode: Literal["AUTO", "SEQUENTIAL", "CONCURRENT", "MIXED"] = "AUTO"
 
 class TaskNode(BaseModel):
     task_id: str
     description: str
     priority: int = 1
     dependencies: List[str] = Field(default_factory=list)
-    estimated_token: int = 0
-    estimated_cost: float = 0.0
-    estimated_time: int = 0  # in seconds
-    route_target: str = "auto" # The router to use
+    route_target: str = "ToolRouter"
 
-class TaskGraph(BaseModel):
-    strategy: PlannerStrategy = Field(default_factory=PlannerStrategy)
-    nodes: List[TaskNode] = Field(default_factory=list)
+class PlanningResult(BaseModel):
+    objective: str
+    strategy: Literal["AUTO", "SEQUENTIAL", "CONCURRENT", "MIXED", "ADAPTIVE"] = "ADAPTIVE"
+    tasks: List[TaskNode] = Field(default_factory=list)
+    dependency_graph: Dict[str, List[str]] = Field(default_factory=dict)
+    estimated_tokens: int = 0
+    estimated_cost: float = 0.0
+    estimated_duration: int = 0
+    execution_order: List[str] = Field(default_factory=list)
+    parallel_groups: List[List[str]] = Field(default_factory=list)
+    risks: List[str] = Field(default_factory=list)
+    checkpoints: List[str] = Field(default_factory=list)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
     
-class PlanningAgent:
+class PlanningAgent(BasePlanner):
     def __init__(self, llm_client=None):
         self.client = llm_client
-        logger.info("Initialized PlanningAgent with Hybrid Strategy support.")
+        logger.info("Initialized Enterprise PlanningAgent.")
         
-    async def create_plan(self, user_prompt: str) -> TaskGraph:
-        logger.info("PlanningAgent: Analyzing dependencies and building Task Graph...")
-        # Stub: In real execution, this calls Claude with tools/structured output
-        # to generate a JSON adhering to TaskGraph.
+    async def create_plan(self, user_prompt: str) -> PlanningResult:
+        logger.info("PlanningAgent: Generating Execution Plan...")
+        # Stub logic
+        node1 = TaskNode(task_id="t1", description="Init", route_target="ToolRouter::bash_execution")
+        node2 = TaskNode(task_id="t2", description="Deploy", dependencies=["t1"])
         
-        # Simulating a mock graph
-        node1 = TaskNode(
-            task_id="task_1",
-            description="Generate Model",
-            route_target="WorkflowRouter",
-            estimated_token=500,
-            estimated_time=10
+        result = PlanningResult(
+            objective="Simulated Objective",
+            strategy="ADAPTIVE",
+            tasks=[node1, node2],
+            dependency_graph={"t2": ["t1"], "t1": []},
+            estimated_tokens=1500,
+            execution_order=["t1", "t2"]
         )
-        node2 = TaskNode(
-            task_id="task_2",
-            description="Generate API",
-            dependencies=["task_1"],
-            route_target="ToolRouter",
-            estimated_token=800,
-            estimated_time=15
-        )
-        
-        graph = TaskGraph(
-            strategy=PlannerStrategy(mode="SEQUENTIAL"),
-            nodes=[node1, node2]
-        )
-        logger.success(f"Task Graph generated with {len(graph.nodes)} nodes. Strategy: {graph.strategy.mode}")
-        return graph
+        return result

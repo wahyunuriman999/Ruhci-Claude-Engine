@@ -4,4 +4,4 @@
 # Copyright (c) 2024-2026 Wahyu Nur Iman. 
 # All rights reserved.
 # ==========================================
-from router.registry import UniversalRegistry\ndef test_router():\n    assert 'ToolRouter' in UniversalRegistry._registry['Router']
+import pytest\nfrom router.dispatcher import Dispatcher\ndef test_dispatcher():\n    d = Dispatcher()\n    res = d.dispatch('ToolRouter', {})\n    assert 'ToolRouter' in res

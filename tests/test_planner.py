@@ -4,4 +4,4 @@
 # Copyright (c) 2024-2026 Wahyu Nur Iman. 
 # All rights reserved.
 # ==========================================
-from router.registry import UniversalRegistry\ndef test_router():\n    assert 'ToolRouter' in UniversalRegistry._registry['Router']
+import pytest\nfrom planner.agent import PlanningAgent\n@pytest.mark.asyncio\nasync def test_planner():\n    agent = PlanningAgent()\n    res = await agent.create_plan('x')\n    assert res.strategy == 'ADAPTIVE'
