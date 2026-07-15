@@ -49,6 +49,21 @@ Ruhci employs a multi-stage deterministic pipeline:
 ## 9. Analysis
 Ruhci achieved a **92.1% net reduction** in token usage and cost. The Context Sufficiency Score of 100.0% alongside 0 Regression Failures proves that deterministic context pruning successfully filters noise without stripping vital execution graphs or hidden dependencies.
 
+
+## 9.5. Threats to Validity
+
+**Internal Validity**
+*Is the benchmark overfitted to Ruhci's architecture?* 
+To mitigate this, we rely on unseen repositories and an open community benchmark hub to continuously test edge cases.
+
+**External Validity**
+*Does this apply to all programming languages?*
+Currently, no. The AST analysis is Python-first. Dynamic languages with heavy runtime evaluation may see degraded ranking accuracy.
+
+**Construct Validity**
+*Does Context Sufficiency accurately measure AI quality?*
+We currently use task completion (passing test suites) as a proxy for understanding. Future work may include time-to-first-success and human preference metrics.
+
 ## 10. Limitations
 - **Language Coverage**: Current implementation focuses on languages with strong static analysis capabilities.
 - **Dynamic Behavior**: Runtime-generated code, reflection, and highly dynamic patterns may reduce analysis accuracy.

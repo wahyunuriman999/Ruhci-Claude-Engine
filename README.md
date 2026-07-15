@@ -36,12 +36,12 @@ Relevant Context (8,000 tokens)
 
 ## Benchmark Results (Real API Simulation)
 Tested on 25 complex engineering queries across 5 major repositories (FastAPI, Requests, Flask, Django, SQLAlchemy) using Claude 3.5 Sonnet:
-- **Token Reduction**: 92.1% (Net)
-- **Cost Reduction**: 92.1% (Net)
+- **Token Reduction**: 92.1% (Net)*
+- **Cost Reduction**: 92.1% (Net)*
 - **Context Sufficiency**: 100.0% (Quality equal to Native)
 - **Regression Failure**: 0
 
-*Read the full [Scientific Evaluation Report](docs/scientific_report_v1.0.md).*
+*In our controlled evaluation, Ruhci reduced input context requirements by 92.1% while maintaining task success parity. Actual savings may vary based on provider caching and output tokens.\n\nRead the full [Scientific Evaluation Report](docs/scientific_report_v1.0.md).*
 
 ## Current Limitations
 To ensure transparency, we disclose the following limitations:
