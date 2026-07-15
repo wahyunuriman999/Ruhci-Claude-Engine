@@ -18,14 +18,23 @@ Tolong bertindak sebagai Principal Software Engineer. Baca kode inti dan README 
 ### File: `README.md`
 ```markdown
 <div align="center">
-  <h1>Ruhci</h1>
-  <p><strong>Deterministic Context Intelligence Engine</strong></p>
+  <h1 align="center">Ruhci Engine v0.6-beta</h1>
+  <p align="center"><strong>Deterministic Context Intelligence Engine</strong></p>
   <p><em>Repository Intelligence Layer for AI Coding Agents</em></p>
 
-  [![Version](https://img.shields.io/badge/version-v0.4_Vector_Semantic_Preview-blue.svg)](#)
+  Ruhci (dibaca: Ru-ci) adalah mesin pencarian (retrieval) ringan dan 100% offline yang dirancang khusus untuk memfilter *codebase* Python raksasa menjadi hanya beberapa file yang paling relevan.
+
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
-  [![Status](https://img.shields.io/badge/status-Community_Validation-orange.svg)](#)
+  [![Status](https://img.shields.io/badge/status-Beta-blue.svg)](#)
 </div>
+
+## ⚠️ Limitations & Known Edge Cases (v0.6-beta)
+Sebagai sistem *deterministic* berbasis TF-IDF dan AST (tanpa Vector Embeddings), Ruhci memiliki keterbatasan bawaan:
+- **Substring Match False Positives**: Untuk *query term* yang sangat pendek (seperti `ssl`, `jwt`, `db`), pencocokan *substring* dua arah (`term in token or token in term`) dapat memicu *false positive* (contoh: `ssl` akan cocok dengan variabel bernama `sesslink`).
+- **Semantic Gap**: Tidak dapat mengenali sinonim konseptual (misal: "TLS handshake" tidak akan menangkap file berisi kata "SSL" jika tidak ada irisan string sama sekali).
+- **Abbreviation Mismatch**: Pengembang mungkin menggunakan singkatan di kode (misal `jwt`), sementara *user* bertanya dengan kata penuh ("JSON Web Token"). Ruhci tidak akan menemukan kecocokan tanpa *embedding*.
+
+Oleh karena itu, Ruhci diposisikan sebagai **komplemen struktural yang efisien** untuk sistem Vector RAG, bukan pengganti mutlak.
 
 <br>
 
@@ -442,9 +451,10 @@ class HybridRankerV02:
             # 3. Dependency Relevance
             dependency_score = self._compute_dependency_relevance(filepath, graph)
             
-            # THE SEMANTIC GATE: Prevent Dependency Dominance
-            if symbol_score <= 0.1 and semantic_score < 0.2:
-                dependency_score *= 0.2
+            # DEPENDENCY-SEMANTIC CALIBRATION
+            # Prevent files with huge dependency scores (like models.py) from dominating 
+            # if their semantic relevance is low.
+            dependency_score *= min(1.0, semantic_score * 4.0)
             
             # 4. Intent Score
             intent_score = 1.0 if self.intent_classifier.get_role_boost(intents, filepath) > 1.0 else 0.5
@@ -472,9 +482,6 @@ class HybridRankerV02:
             filepath_lower = filepath.lower()
             if "test" in filepath_lower:
                 final_score *= 0.5
-            # Exception Penalty: files solely defining errors shouldn't top logic queries
-            if "exception" in filepath_lower or "error" in filepath_lower:
-                final_score *= 0.4
                 
             ranked_results.append({
                 "file": filepath,
