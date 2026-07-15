@@ -1,0 +1,22 @@
+{
+    "repository": "FastAPI",
+    "task": "Fix JWT refresh bug",
+    "query": "Refresh token doesn't work.",
+    "gold_files": [
+        "fastapi/security/oauth2.py",
+        "fastapi/middleware/auth.py"
+    ],
+    "acceptable_files": [
+        "fastapi/security/utils.py",
+        "fastapi/dependencies/models.py"
+    ],
+    "forbidden_files": [
+        "fastapi/applications.py",
+        "fastapi/routing.py"
+    ],
+    "expected_symbols": [
+        "OAuth2PasswordBearer",
+        "HTTPBearer"
+    ],
+    "difficulty": "medium"
+}

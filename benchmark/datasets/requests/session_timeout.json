@@ -1,0 +1,20 @@
+{
+    "repository": "Requests",
+    "task": "Add timeout to all session requests",
+    "query": "How do I globally set a timeout for the entire requests.Session?",
+    "gold_files": [
+        "requests/sessions.py",
+        "requests/adapters.py"
+    ],
+    "acceptable_files": [
+        "requests/api.py"
+    ],
+    "forbidden_files": [
+        "requests/exceptions.py"
+    ],
+    "expected_symbols": [
+        "Session",
+        "Timeout"
+    ],
+    "difficulty": "hard"
+}
