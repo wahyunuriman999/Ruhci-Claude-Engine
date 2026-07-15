@@ -5,9 +5,10 @@ class CandidateSelector:
         and pulls in highly central hub files from the dependency graph.
         """
         import re
-        # Deterministic filtering based on path relevance with crude stemming
+        # Deterministic filtering based on path relevance with safe stemming
         raw_terms = set(re.findall(r'\w+', query.lower()))
-        query_terms = {t[:-1] if t.endswith('s') and len(t) > 3 else t for t in raw_terms}
+        exceptions = {"does", "status", "utils", "this", "is", "has", "was", "as", "its", "us", "analysis", "process", "access"}
+        query_terms = {t[:-1] if t.endswith('s') and not t.endswith('ss') and t not in exceptions and len(t) > 3 else t for t in raw_terms}
         
         scored_files = []
         for f in all_files:

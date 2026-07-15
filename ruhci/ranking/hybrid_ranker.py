@@ -1,6 +1,17 @@
 from ruhci.ranking.intent import QueryIntentClassifier
 
 class HybridRankerV01:
+    """
+    V0.3 Hybrid Ranker. Combines multiple signals for final ranking.
+    
+    LIMITATIONS (v0.3 Roadmap for v0.4):
+    1. Blind to Content: Files without top-level AST symbols (e.g., config files, certs.py) 
+       will receive zero symbol score. Ranking relies purely on AST structure. Future versions 
+       should incorporate content-based semantic matching (TF-IDF/Vector embeddings).
+    2. Dependency Dominance: High in-degree files (e.g., models.py) can dominate the ranking 
+       because dependency score carries heavy weight (0.25). Future versions should cross-validate 
+       structural centrality with semantic relevance to prevent false positives.
+    """
     def __init__(self):
         self.intent_classifier = QueryIntentClassifier()
         # Updated Guardrail Weights
@@ -23,9 +34,10 @@ class HybridRankerV01:
     def rank(self, query: str, candidates: list, metadata_index: dict, graph) -> list:
         import re
         
-        # Word tokenization for query terms (ignore punctuation) with crude stemming
+        # Word tokenization for query terms (ignore punctuation) with safe stemming
         raw_terms = set(re.findall(r'\w+', query.lower()))
-        query_terms = {t[:-1] if t.endswith('s') and len(t) > 3 else t for t in raw_terms}
+        exceptions = {"does", "status", "utils", "this", "is", "has", "was", "as", "its", "us", "analysis", "process", "access"}
+        query_terms = {t[:-1] if t.endswith('s') and not t.endswith('ss') and t not in exceptions and len(t) > 3 else t for t in raw_terms}
         
         intents = self.intent_classifier.classify(query)
         ranked_results = []
