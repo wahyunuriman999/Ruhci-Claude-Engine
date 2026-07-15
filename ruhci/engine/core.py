@@ -32,7 +32,7 @@ class RuhciEngine:
         graph.build_from_metadata(metadatas)
 
         selector = CandidateSelector()
-        candidates = selector.select(query, all_files, max_candidates=50)
+        candidates = selector.select(query, all_files, graph=graph, max_candidates=50)
 
         ranker = HybridRankerV01()
         results = ranker.rank(query, candidates, metadata_index, graph)

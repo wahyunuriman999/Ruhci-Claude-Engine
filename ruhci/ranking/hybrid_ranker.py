@@ -22,9 +22,13 @@ class HybridRankerV01:
 
     def rank(self, query: str, candidates: list, metadata_index: dict, graph) -> list:
         import re
+        
+        # Word tokenization for query terms (ignore punctuation) with crude stemming
+        raw_terms = set(re.findall(r'\w+', query.lower()))
+        query_terms = {t[:-1] if t.endswith('s') and len(t) > 3 else t for t in raw_terms}
+        
         intents = self.intent_classifier.classify(query)
         ranked_results = []
-        query_terms = set(re.findall(r'\w+', query.lower()))
         
         for filepath in candidates:
             meta = metadata_index.get(filepath)
@@ -34,38 +38,32 @@ class HybridRankerV01:
             # 1. Symbol Match (Strongest Evidence)
             symbol_score = 0.1
             if meta.symbols:
-                total_symbols = len(meta.symbols)
-                matched_symbols = sum(1 for sym in meta.symbols for term in query_terms if term in sym.name.lower())
-                ratio = matched_symbols / total_symbols if total_symbols > 0 else 0
-                # Scale the ratio so that a small fraction (e.g. 5%) can still yield a decent score, but cap at 1.0
-                symbol_score = min(1.0, 0.1 + (ratio * 5.0))
+                matched_terms = set()
+                for sym in meta.symbols:
+                    for term in query_terms:
+                        if term in sym.name.lower():
+                            matched_terms.add(term)
+                ratio = len(matched_terms) / len(query_terms) if query_terms else 0
+                symbol_score = min(1.0, 0.1 + (ratio * 0.9))
             
             # 2. Dependency Relevance
             dependency_score = self._compute_dependency_relevance(filepath, graph)
             
-            # 3. Semantic Similarity (Mocked with path overlap for now)
-            semantic_score = min(1.0, sum(1 for term in query_terms if term in filepath.lower()) * 0.2)
-            
             # 4. Intent Score
             intent_score = 1.0 if self.intent_classifier.get_role_boost(intents, filepath) > 1.0 else 0.5
-            
-            # Temporary v0.3 override to ensure sessions.py ranks well
-            if "sessions.py" in filepath.lower() or "adapters.py" in filepath.lower():
-                intent_score = 1.0
-                semantic_score = 1.0
-                symbol_score = 1.0
             
             # 5. Role Score
             role_score = 0.5
             if "utils" in filepath or "core" in filepath or "security" in filepath:
                 role_score = 0.8
-            if "test" in filepath.lower():
-                role_score = 0.1
             
             # 6. Path Score
             path_score = 1.0 if any(term in filepath.lower() for term in query_terms) else 0.3
             
-            # FUSION
+            # 3. Semantic Similarity (Mocked with path overlap for now)
+            filename = filepath.lower().replace('\\', '/').split('/')[-1]
+            matched_path_terms = sum(1 for term in query_terms if term in filename)
+            semantic_score = min(1.0, matched_path_terms * 0.5)
             final_score = (
                 (symbol_score * self.weights["symbol"]) +
                 (dependency_score * self.weights["dependency"]) +
@@ -75,6 +73,10 @@ class HybridRankerV01:
                 (path_score * self.weights["path"])
             )
             
+            # Explicit final penalty for test files
+            if "test" in filepath.lower():
+                final_score *= 0.5
+                
             ranked_results.append({
                 "file": filepath,
                 "score": final_score,

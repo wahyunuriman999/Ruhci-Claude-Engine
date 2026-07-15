@@ -1,14 +1,13 @@
 class CandidateSelector:
-    def select(self, query: str, all_files: list, max_candidates: int = 200) -> list:
+    def select(self, query: str, all_files: list, graph=None, max_candidates: int = 200) -> list:
         """
-        Filters candidates based on query term overlap with file paths.
-        LIMITATION (v0.2.1): Pure path matching can miss highly relevant files 
-        that do not contain the query terms in their filepath. 
-        A semantic/vector pre-filter is planned for future releases.
+        Filters candidates based on query term overlap with file paths, 
+        and pulls in highly central hub files from the dependency graph.
         """
         import re
-        # Deterministic filtering based on path relevance
-        query_terms = set(re.findall(r'\w+', query.lower()))
+        # Deterministic filtering based on path relevance with crude stemming
+        raw_terms = set(re.findall(r'\w+', query.lower()))
+        query_terms = {t[:-1] if t.endswith('s') and len(t) > 3 else t for t in raw_terms}
         
         scored_files = []
         for f in all_files:
@@ -25,9 +24,18 @@ class CandidateSelector:
         
         top_files = [f[1] for f in scored_files[:max_candidates]]
         
-        # Priority 3 Fix: Ensure critical hub files are not missed by purely path-based selector
-        for f in all_files:
-            if "sessions.py" in f and f not in top_files:
-                top_files.append(f)
+        # Priority 3 Fix: Organically inject top hub files (high in-degree) 
+        # so that core framework files like sessions.py aren't missed by pure path matching
+        if graph:
+            hub_scores = []
+            for f in all_files:
+                if graph.graph.has_node(f):
+                    hub_scores.append((graph.graph.degree(f), f))
+            hub_scores.sort(key=lambda x: (-x[0], x[1]))
+            
+            # Inject top 10 most imported hub files
+            for _, hub_file in hub_scores[:10]:
+                if hub_file not in top_files:
+                    top_files.append(hub_file)
                 
         return top_files

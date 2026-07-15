@@ -1,40 +1,62 @@
 import os
 import sys
-import json
+import subprocess
+from loguru import logger
 from ruhci.engine.core import RuhciEngine
 
-def main():
-    repo_path = 'requests_clone'
-    if not os.path.exists(repo_path):
-        print(f"Error: {repo_path} not found.")
-        sys.exit(1)
+def clone_repo(repo_url, dest_dir):
+    if not os.path.exists(dest_dir):
+        logger.info(f"Cloning {repo_url} into {dest_dir}...")
+        subprocess.run(["git", "clone", "--depth", "1", repo_url, dest_dir], check=True)
 
-    print(f"Instantiating RuhciEngine for {repo_path}...")
-    engine = RuhciEngine(repo_path)
+def main():
+    test_cases = [
+        {
+            "repo": "https://github.com/psf/requests.git",
+            "dir": "requests_clone",
+            "query": "How are HTTP adapters initialized and managed for sessions?"
+        },
+        {
+            "repo": "https://github.com/pallets/flask.git",
+            "dir": "flask_clone",
+            "query": "How is the application context managed and pushed to the stack?"
+        },
+        {
+            "repo": "https://github.com/urllib3/urllib3.git",
+            "dir": "urllib3_clone",
+            "query": "How is connection pooling implemented and managed?"
+        }
+    ]
     
-    query = "How are HTTP adapters initialized and managed for sessions?"
-    print(f"Query: '{query}'")
-    print("Compiling context...")
+    os.makedirs("benchmark/proof", exist_ok=True)
+    proof_file = "benchmark/proof/empirical_run_001.txt"
     
-    results = engine.compile_context(query)
-    
-    output_lines = []
-    output_lines.append(f"Empirical Run 001 - Target: {repo_path}")
-    output_lines.append(f"Query: {query}")
-    output_lines.append("-" * 40)
-    for idx, res in enumerate(results[:10]):
-        output_lines.append(f"[{idx+1}] File: {res['filepath']}")
-        output_lines.append(f"    Score: {res['score']:.4f}")
-        output_lines.append(f"    Signals: {json.dumps(res['signals'])}")
-    
-    out_dir = "benchmark/proof"
-    os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, "empirical_run_001.txt")
-    
-    with open(out_path, "w") as f:
-        f.write("\n".join(output_lines) + "\n")
+    with open(proof_file, "w") as f:
+        f.write("Empirical Run 002 - Validation Across 3 Repositories\n")
+        f.write("========================================================\n\n")
         
-    print(f"Results written to {out_path}")
+        for case in test_cases:
+            clone_repo(case["repo"], case["dir"])
+            
+            f.write(f"Target Repository: {case['dir']}\n")
+            f.write(f"Query: {case['query']}\n")
+            f.write("-" * 40 + "\n")
+            
+            print(f"Instantiating RuhciEngine for {case['dir']}...")
+            engine = RuhciEngine(case["dir"])
+            
+            print(f"Query: '{case['query']}'")
+            print("Compiling context...")
+            results = engine.compile_context(case['query'])
+            
+            for i, res in enumerate(results[:5]):
+                f.write(f"[{i+1}] File: {res['filepath']}\n")
+                f.write(f"    Score: {res['score']:.4f}\n")
+                f.write(f"    Signals: {res['signals']}\n")
+            
+            f.write("\n\n")
+            
+    print(f"Results written to {proof_file}")
 
 if __name__ == '__main__':
     main()
