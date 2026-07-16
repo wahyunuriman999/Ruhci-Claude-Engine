@@ -290,8 +290,9 @@ Read our full [Failure Cases Report](docs/failure_cases.md).
 - [x] **v0.1** - Research Preview & Scientific Benchmark Model
 - [x] **v0.3** - Functional Research Preview (End-to-End AST Pipeline)
 - [x] **v0.4** - Vector-Semantic Pre-filtering & Content Search
-- [ ] **v0.5** - Community Validation & Attack Mitigation
-- [ ] **v0.6** - Multi-Language Support (JS/TS, Go, Rust)
+- [x] **v0.5** - Community Validation & Attack Mitigation
+- [x] **v0.6** - Semantic Calibration & Edge Case Mitigation
+- [ ] **v0.7** - Multi-Language Support (JS/TS, Go, Rust)
 - [ ] **v1.0** - Production Engine
 
 ---
@@ -342,7 +343,7 @@ class RuhciEngine:
                 continue
             for file in files:
                 if file.endswith('.py'):
-                    filepath = os.path.join(root, file).replace('\\\\', '/')
+                    filepath = os.path.join(root, file).replace('\\', '/')
                     if filepath.startswith('./'):
                         filepath = filepath[2:]
                     all_files.append(filepath)
@@ -411,17 +412,24 @@ class HybridRankerV02:
         in_degree = graph.graph.in_degree(filepath)
         return min(1.0, 0.1 + (in_degree * 0.1))
 
+    def _stem_term(self, term: str) -> str:
+        # Do not stem very short or common structural terms
+        if len(term) < 6:
+            return term
+        for suffix in ["ing", "ed", "s", "es", "ly", "tion", "ity", "ment", "able", "ible"]:
+            if term.endswith(suffix):
+                return term[:-len(suffix)]
+        return term
+
     def rank(self, query: str, candidates: list, metadata_index: dict, graph) -> list:
         # Word tokenization for query terms (ignore punctuation) with safe stemming
         raw_terms = set(re.findall(r'\w+', query.lower()))
         stopwords = {"how", "does", "work", "what", "where", "why", "who", "when", "is", "are", "am", "be", "been", "being", "have", "has", "had", "do", "did", "and", "or", "but", "if", "for", "in", "of", "to", "with", "on", "by", "this", "that", "it", "its", "us", "a", "an", "the"}
-        exceptions = {"status", "utils", "analysis", "process", "access"}
         
         query_terms = set()
         for t in raw_terms:
             if t in stopwords: continue
-            if t.endswith('s') and not t.endswith('ss') and t not in exceptions:
-                t = t[:-1]
+            t = self._stem_term(t)
             if len(t) > 2:
                 query_terms.add(t)
         
@@ -562,10 +570,15 @@ class ContentAnalyzer:
         # Count frequencies
         for token in content_tokens:
             for term in query_terms:
-                # substring match to handle stemming variations inside the content 
-                # e.g., term 'certificate' matching token 'certifi' or 'cert'
-                if term in token or (len(token) > 3 and token in term):
-                    content_term_counts[term] += 1
+                # Require exact match for short terms (< 4 chars) to prevent false positives like 'ssl' in 'sesslink'
+                if len(term) < 4:
+                    if term == token:
+                        content_term_counts[term] += 1
+                else:
+                    # substring match to handle stemming variations inside the content 
+                    # e.g., term 'certificate' matching token 'certifi' or 'cert'
+                    if term in token or (len(token) > 3 and token in term):
+                        content_term_counts[term] += 1
 
         matched_terms = sum(1 for term, count in content_term_counts.items() if count > 0)
         total_terms = len(query_terms)

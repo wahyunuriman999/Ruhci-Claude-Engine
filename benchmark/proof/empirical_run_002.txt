@@ -7,35 +7,35 @@ Query: How does SSL certificate verification work?
 [1] File: requests_clone/src/requests/exceptions.py
     Score: 0.4183
     Signals: {'symbol': 0.4, 'dependency': 0.5, 'semantic': 0.28888888888888886, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
-[2] File: requests_clone/src/requests/utils.py
+[2] File: requests_clone/src/requests/adapters.py
+    Score: 0.3350
+    Signals: {'symbol': 0.1, 'dependency': 0.30000000000000004, 'semantic': 0.7333333333333334, 'intent': 0.7, 'role': 0.5, 'path': 0.3}
+[3] File: requests_clone/src/requests/sessions.py
+    Score: 0.3250
+    Signals: {'symbol': 0.1, 'dependency': 0.1, 'semantic': 1.0, 'intent': 0.7, 'role': 0.5, 'path': 0.3}
+[4] File: requests_clone/src/requests/utils.py
     Score: 0.3167
     Signals: {'symbol': 0.1, 'dependency': 0.5, 'semantic': 0.3111111111111111, 'intent': 0.5, 'role': 0.8, 'path': 0.3}
-[3] File: requests_clone/src/requests/adapters.py
-    Score: 0.3150
-    Signals: {'symbol': 0.1, 'dependency': 0.30000000000000004, 'semantic': 0.7333333333333334, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
-[4] File: requests_clone/src/requests/sessions.py
-    Score: 0.3050
-    Signals: {'symbol': 0.1, 'dependency': 0.1, 'semantic': 1.0, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
-[5] File: requests_clone/tests/test_requests.py
-    Score: 0.2525
-    Signals: {'symbol': 0.7, 'dependency': 0.1, 'semantic': 0.7333333333333334, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+[5] File: requests_clone/src/requests/api.py
+    Score: 0.2517
+    Signals: {'symbol': 0.1, 'dependency': 0.1, 'semantic': 0.6444444444444445, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
 
 
 Target Repository: flask_clone
 Query: How is the application context managed and pushed to the stack?
 ----------------------------------------
 [1] File: flask_clone/src/flask/globals.py
-    Score: 0.5540
-    Signals: {'symbol': 0.28, 'dependency': 1.0, 'semantic': 0.6799999999999999, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+    Score: 0.5840
+    Signals: {'symbol': 0.28, 'dependency': 1.0, 'semantic': 0.6799999999999999, 'intent': 0.8, 'role': 0.5, 'path': 0.3}
 [2] File: flask_clone/src/flask/helpers.py
-    Score: 0.5530
-    Signals: {'symbol': 0.28, 'dependency': 0.9, 'semantic': 0.8400000000000001, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+    Score: 0.5830
+    Signals: {'symbol': 0.28, 'dependency': 0.9, 'semantic': 0.8400000000000001, 'intent': 0.8, 'role': 0.5, 'path': 0.3}
 [3] File: flask_clone/src/flask/ctx.py
     Score: 0.5490
     Signals: {'symbol': 0.4600000000000001, 'dependency': 0.5, 'semantic': 1.0, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
 [4] File: flask_clone/src/flask/sansio/app.py
-    Score: 0.4800
-    Signals: {'symbol': 0.28, 'dependency': 0.8, 'semantic': 0.52, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+    Score: 0.5100
+    Signals: {'symbol': 0.28, 'dependency': 0.8, 'semantic': 0.52, 'intent': 0.8, 'role': 0.5, 'path': 0.3}
 [5] File: flask_clone/src/flask/app.py
     Score: 0.4780
     Signals: {'symbol': 0.28, 'dependency': 0.6, 'semantic': 0.8400000000000001, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
@@ -45,19 +45,19 @@ Target Repository: urllib3_clone
 Query: How is connection pooling implemented and managed?
 ----------------------------------------
 [1] File: urllib3_clone/src/urllib3/exceptions.py
-    Score: 0.6800
-    Signals: {'symbol': 0.55, 'dependency': 1.0, 'semantic': 0.8, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+    Score: 0.7100
+    Signals: {'symbol': 0.55, 'dependency': 1.0, 'semantic': 0.8, 'intent': 0.8, 'role': 0.5, 'path': 0.3}
 [2] File: urllib3_clone/src/urllib3/connection.py
-    Score: 0.6550
-    Signals: {'symbol': 0.325, 'dependency': 1.0, 'semantic': 1.0, 'intent': 0.5, 'role': 0.5, 'path': 1.0}
+    Score: 0.6850
+    Signals: {'symbol': 0.325, 'dependency': 1.0, 'semantic': 1.0, 'intent': 0.8, 'role': 0.5, 'path': 1.0}
 [3] File: urllib3_clone/src/urllib3/response.py
-    Score: 0.6200
-    Signals: {'symbol': 0.325, 'dependency': 1.0, 'semantic': 1.0, 'intent': 0.5, 'role': 0.5, 'path': 0.3}
+    Score: 0.6500
+    Signals: {'symbol': 0.325, 'dependency': 1.0, 'semantic': 1.0, 'intent': 0.8, 'role': 0.5, 'path': 0.3}
 [4] File: urllib3_clone/src/urllib3/connectionpool.py
-    Score: 0.6150
-    Signals: {'symbol': 0.55, 'dependency': 0.6, 'semantic': 0.8, 'intent': 0.5, 'role': 0.5, 'path': 1.0}
+    Score: 0.6350
+    Signals: {'symbol': 0.55, 'dependency': 0.6, 'semantic': 0.8, 'intent': 0.7, 'role': 0.5, 'path': 1.0}
 [5] File: urllib3_clone/src/urllib3/poolmanager.py
-    Score: 0.6050
-    Signals: {'symbol': 0.775, 'dependency': 0.2, 'semantic': 0.8, 'intent': 0.5, 'role': 0.5, 'path': 1.0}
+    Score: 0.6250
+    Signals: {'symbol': 0.775, 'dependency': 0.2, 'semantic': 0.8, 'intent': 0.7, 'role': 0.5, 'path': 1.0}
 
 
