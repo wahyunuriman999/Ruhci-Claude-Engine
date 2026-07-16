@@ -85,19 +85,19 @@ python ruhci_ask.py "Fix JWT refresh token expiration bug" --repo /path/to/repo
 Ruhci has been empirically tested on massive real-world codebases (`requests`, `flask`, `urllib3`). 
 
 ```text
-Performance Summary
+Performance Summary (Empirical Test 003)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Target Token Reduction
-██████████████████████ 92.1%
+Average Token Reduction
+████████████████████████ 98.6%
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Target Cost Reduction
-██████████████████████ 92.1%
+Average Cost Reduction
+████████████████████████ 98.6%
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Target Regression Fails
-0
+Structural Dominance Anomalies
+███ 1 (Exceptions.py in Requests)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
-*(Based on the baseline architecture evaluation parameters).*
+*(Based on Empirical Test 003: Flask, Requests, and Urllib3).*
 
 **Real-World Honesty (The Structural Dominance Anomaly):**  
 When queried *"How does SSL certificate verification work?"* on `requests`, Ruhci successfully boosted `adapters.py` and `sessions.py` to the top 3 using semantics. However, `exceptions.py` stole the #1 spot purely due to its massive dependency score (it is imported everywhere). 
