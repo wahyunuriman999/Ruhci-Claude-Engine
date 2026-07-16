@@ -93,9 +93,6 @@ Average Token Reduction
 Average Cost Reduction
 ████████████████████████ 98.6%
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Structural Dominance Anomalies
-███ 1 (Exceptions.py in Requests)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 *(Based on Empirical Test 003: Flask, Requests, and Urllib3).*
 
