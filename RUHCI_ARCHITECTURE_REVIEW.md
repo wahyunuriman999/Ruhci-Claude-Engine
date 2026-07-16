@@ -18,7 +18,7 @@ Tolong bertindak sebagai Principal Software Engineer. Baca kode inti dan README 
 ### File: `README.md`
 ```markdown
 <div align="center">
-  <h1 align="center">Ruhci Engine v0.6-beta</h1>
+  <h1 align="center">Ruhci Engine v1.0</h1>
   <p align="center"><strong>Deterministic Context Intelligence Engine</strong></p>
   <p><em>Repository Intelligence Layer for AI Coding Agents</em></p>
 
