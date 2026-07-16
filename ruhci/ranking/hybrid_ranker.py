@@ -115,7 +115,7 @@ class HybridRankerV02:
             
             # Explicit final penalties
             filepath_lower = filepath.lower()
-            if "test" in filepath_lower:
+            if "test" in filepath_lower and "Usage" not in intents and "Bug Fix" not in intents:
                 final_score *= 0.5
                 
             ranked_results.append({

@@ -6,10 +6,10 @@
   Ruhci (pronounced: Ru-ci) is a lightweight, 100% offline retrieval engine designed specifically to filter massive Python codebases down to only the most relevant files.
 
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
-  [![Status](https://img.shields.io/badge/status-Beta-blue.svg)](#)
+  [![Status](https://img.shields.io/badge/status-Production-green.svg)](#)
 </div>
 
-## ⚠️ Limitations & Known Edge Cases (v0.6-beta)
+## ⚠️ Limitations & Known Edge Cases (v1.0 Production)
 As a deterministic system based on TF-IDF and AST (without Vector Embeddings), Ruhci has inherent limitations:
 - **Substring Match False Positives**: For very short query terms (like `ssl`, `jwt`, `db`), bidirectional substring matching (`term in token or token in term`) can trigger false positives (e.g., `ssl` will match a variable named `sesslink`).
 - **Semantic Gap**: Cannot recognize conceptual synonyms (e.g., "TLS handshake" will not catch files containing the word "SSL" if there is no string overlap at all).
@@ -275,7 +275,7 @@ Read our full [Failure Cases Report](docs/failure_cases.md).
 - [x] **v0.6** - Semantic Calibration & Edge Case Mitigation
 - [x] **v0.7** - Intent Dynamics & Lexical Analytics
 - [ ] **v0.8** - Multi-Language Support (JS/TS, Go, Rust)
-- [ ] **v1.0** - Production Engine
+- [x] **v1.0** - Production Engine Release
 
 ---
 

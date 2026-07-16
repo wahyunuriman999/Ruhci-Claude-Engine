@@ -67,7 +67,7 @@ def main():
     parser.add_argument("query", type=str, help="The query or task you want the AI to solve")
     parser.add_argument("--repo", type=str, default=".", help="Path to the repository")
     parser.add_argument("--top", type=int, default=3, help="Number of files to extract")
-    parser.add_argument("--agent", type=str, default="free-claude-code", help="The AI CLI to route to (free-claude-code, ollama, claude)")
+    parser.add_argument("--agent", type=str, default="claude", help="The AI CLI to route to (claude, ollama, free-claude-code)")
     parser.add_argument("--dry-run", action="store_true", help="Just print the context, do not execute AI")
     
     args = parser.parse_args()
