@@ -11,7 +11,7 @@
 
 <br>
 
-> **280,000 tokens of code. One bug.**
+> **200,000+ tokens of code. One bug.**
 > 
 > Traditional AI: *"Read everything."*
 > 
