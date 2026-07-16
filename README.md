@@ -273,7 +273,8 @@ Read our full [Failure Cases Report](docs/failure_cases.md).
 - [x] **v0.4** - Vector-Semantic Pre-filtering & Content Search
 - [x] **v0.5** - Community Validation & Attack Mitigation
 - [x] **v0.6** - Semantic Calibration & Edge Case Mitigation
-- [ ] **v0.7** - Multi-Language Support (JS/TS, Go, Rust)
+- [x] **v0.7** - Intent Dynamics & Lexical Analytics
+- [ ] **v0.8** - Multi-Language Support (JS/TS, Go, Rust)
 - [ ] **v1.0** - Production Engine
 
 ---

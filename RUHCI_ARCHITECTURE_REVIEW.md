@@ -465,7 +465,13 @@ class HybridRankerV02:
             dependency_score *= min(1.0, semantic_score * 4.0)
             
             # 4. Intent Score
-            intent_score = 1.0 if self.intent_classifier.get_role_boost(intents, filepath) > 1.0 else 0.5
+            in_degree = graph.graph.in_degree(filepath) if graph and graph.graph.has_node(filepath) else 0
+            intent_score = self.intent_classifier.calculate_intent_score(
+                intents=intents,
+                filepath=filepath,
+                in_degree=in_degree,
+                semantic_score=semantic_score
+            )
             
             # 5. Role Score
             role_score = 0.5
