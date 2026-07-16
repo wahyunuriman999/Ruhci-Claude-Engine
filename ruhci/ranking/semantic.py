@@ -58,10 +58,15 @@ class ContentAnalyzer:
         # Count frequencies
         for token in content_tokens:
             for term in query_terms:
-                # substring match to handle stemming variations inside the content 
-                # e.g., term 'certificate' matching token 'certifi' or 'cert'
-                if term in token or (len(token) > 3 and token in term):
-                    content_term_counts[term] += 1
+                # Require exact match for short terms (< 4 chars) to prevent false positives like 'ssl' in 'sesslink'
+                if len(term) < 4:
+                    if term == token:
+                        content_term_counts[term] += 1
+                else:
+                    # substring match to handle stemming variations inside the content 
+                    # e.g., term 'certificate' matching token 'certifi' or 'cert'
+                    if term in token or (len(token) > 3 and token in term):
+                        content_term_counts[term] += 1
 
         matched_terms = sum(1 for term, count in content_term_counts.items() if count > 0)
         total_terms = len(query_terms)

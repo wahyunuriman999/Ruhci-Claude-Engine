@@ -271,8 +271,9 @@ Read our full [Failure Cases Report](docs/failure_cases.md).
 - [x] **v0.1** - Research Preview & Scientific Benchmark Model
 - [x] **v0.3** - Functional Research Preview (End-to-End AST Pipeline)
 - [x] **v0.4** - Vector-Semantic Pre-filtering & Content Search
-- [ ] **v0.5** - Community Validation & Attack Mitigation
-- [ ] **v0.6** - Multi-Language Support (JS/TS, Go, Rust)
+- [x] **v0.5** - Community Validation & Attack Mitigation
+- [x] **v0.6** - Semantic Calibration & Edge Case Mitigation
+- [ ] **v0.7** - Multi-Language Support (JS/TS, Go, Rust)
 - [ ] **v1.0** - Production Engine
 
 ---

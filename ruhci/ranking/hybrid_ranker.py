@@ -33,17 +33,24 @@ class HybridRankerV02:
         in_degree = graph.graph.in_degree(filepath)
         return min(1.0, 0.1 + (in_degree * 0.1))
 
+    def _stem_term(self, term: str) -> str:
+        # Do not stem very short or common structural terms
+        if len(term) < 6:
+            return term
+        for suffix in ["ing", "ed", "s", "es", "ly", "tion", "ity", "ment", "able", "ible"]:
+            if term.endswith(suffix):
+                return term[:-len(suffix)]
+        return term
+
     def rank(self, query: str, candidates: list, metadata_index: dict, graph) -> list:
         # Word tokenization for query terms (ignore punctuation) with safe stemming
         raw_terms = set(re.findall(r'\w+', query.lower()))
         stopwords = {"how", "does", "work", "what", "where", "why", "who", "when", "is", "are", "am", "be", "been", "being", "have", "has", "had", "do", "did", "and", "or", "but", "if", "for", "in", "of", "to", "with", "on", "by", "this", "that", "it", "its", "us", "a", "an", "the"}
-        exceptions = {"status", "utils", "analysis", "process", "access"}
         
         query_terms = set()
         for t in raw_terms:
             if t in stopwords: continue
-            if t.endswith('s') and not t.endswith('ss') and t not in exceptions:
-                t = t[:-1]
+            t = self._stem_term(t)
             if len(t) > 2:
                 query_terms.add(t)
         

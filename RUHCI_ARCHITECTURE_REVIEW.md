@@ -22,19 +22,19 @@ Tolong bertindak sebagai Principal Software Engineer. Baca kode inti dan README 
   <p align="center"><strong>Deterministic Context Intelligence Engine</strong></p>
   <p><em>Repository Intelligence Layer for AI Coding Agents</em></p>
 
-  Ruhci (dibaca: Ru-ci) adalah mesin pencarian (retrieval) ringan dan 100% offline yang dirancang khusus untuk memfilter *codebase* Python raksasa menjadi hanya beberapa file yang paling relevan.
+  Ruhci (pronounced: Ru-ci) is a lightweight, 100% offline retrieval engine designed specifically to filter massive Python codebases down to only the most relevant files.
 
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
   [![Status](https://img.shields.io/badge/status-Beta-blue.svg)](#)
 </div>
 
 ## ⚠️ Limitations & Known Edge Cases (v0.6-beta)
-Sebagai sistem *deterministic* berbasis TF-IDF dan AST (tanpa Vector Embeddings), Ruhci memiliki keterbatasan bawaan:
-- **Substring Match False Positives**: Untuk *query term* yang sangat pendek (seperti `ssl`, `jwt`, `db`), pencocokan *substring* dua arah (`term in token or token in term`) dapat memicu *false positive* (contoh: `ssl` akan cocok dengan variabel bernama `sesslink`).
-- **Semantic Gap**: Tidak dapat mengenali sinonim konseptual (misal: "TLS handshake" tidak akan menangkap file berisi kata "SSL" jika tidak ada irisan string sama sekali).
-- **Abbreviation Mismatch**: Pengembang mungkin menggunakan singkatan di kode (misal `jwt`), sementara *user* bertanya dengan kata penuh ("JSON Web Token"). Ruhci tidak akan menemukan kecocokan tanpa *embedding*.
+As a deterministic system based on TF-IDF and AST (without Vector Embeddings), Ruhci has inherent limitations:
+- **Substring Match False Positives**: For very short query terms (like `ssl`, `jwt`, `db`), bidirectional substring matching (`term in token or token in term`) can trigger false positives (e.g., `ssl` will match a variable named `sesslink`).
+- **Semantic Gap**: Cannot recognize conceptual synonyms (e.g., "TLS handshake" will not catch files containing the word "SSL" if there is no string overlap at all).
+- **Abbreviation Mismatch**: Developers might use abbreviations in code (e.g., `jwt`), while the user asks with the full words ("JSON Web Token"). Ruhci will not find a match without embeddings.
 
-Oleh karena itu, Ruhci diposisikan sebagai **komplemen struktural yang efisien** untuk sistem Vector RAG, bukan pengganti mutlak.
+Therefore, Ruhci is positioned as an **efficient structural complement** to Vector RAG systems, not an absolute replacement.
 
 <br>
 

@@ -16,7 +16,7 @@ class RuhciEngine:
                 continue
             for file in files:
                 if file.endswith('.py'):
-                    filepath = os.path.join(root, file).replace('\\\\', '/')
+                    filepath = os.path.join(root, file).replace('\\', '/')
                     if filepath.startswith('./'):
                         filepath = filepath[2:]
                     all_files.append(filepath)
