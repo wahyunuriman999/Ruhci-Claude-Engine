@@ -25,10 +25,10 @@ Tolong bertindak sebagai Principal Software Engineer. Baca kode inti dan README 
   Ruhci (pronounced: Ru-ci) is a lightweight, 100% offline retrieval engine designed specifically to filter massive Python codebases down to only the most relevant files.
 
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
-  [![Status](https://img.shields.io/badge/status-Beta-blue.svg)](#)
+  [![Status](https://img.shields.io/badge/status-Production-green.svg)](#)
 </div>
 
-## ⚠️ Limitations & Known Edge Cases (v0.6-beta)
+## ⚠️ Limitations & Known Edge Cases (v1.0 Production)
 As a deterministic system based on TF-IDF and AST (without Vector Embeddings), Ruhci has inherent limitations:
 - **Substring Match False Positives**: For very short query terms (like `ssl`, `jwt`, `db`), bidirectional substring matching (`term in token or token in term`) can trigger false positives (e.g., `ssl` will match a variable named `sesslink`).
 - **Semantic Gap**: Cannot recognize conceptual synonyms (e.g., "TLS handshake" will not catch files containing the word "SSL" if there is no string overlap at all).
@@ -292,8 +292,9 @@ Read our full [Failure Cases Report](docs/failure_cases.md).
 - [x] **v0.4** - Vector-Semantic Pre-filtering & Content Search
 - [x] **v0.5** - Community Validation & Attack Mitigation
 - [x] **v0.6** - Semantic Calibration & Edge Case Mitigation
-- [ ] **v0.7** - Multi-Language Support (JS/TS, Go, Rust)
-- [ ] **v1.0** - Production Engine
+- [x] **v0.7** - Intent Dynamics & Lexical Analytics
+- [ ] **v0.8** - Multi-Language Support (JS/TS, Go, Rust)
+- [x] **v1.0** - Production Engine Release
 
 ---
 
@@ -494,7 +495,7 @@ class HybridRankerV02:
             
             # Explicit final penalties
             filepath_lower = filepath.lower()
-            if "test" in filepath_lower:
+            if "test" in filepath_lower and "Usage" not in intents and "Bug Fix" not in intents:
                 final_score *= 0.5
                 
             ranked_results.append({
@@ -674,7 +675,7 @@ def main():
     parser.add_argument("query", type=str, help="The query or task you want the AI to solve")
     parser.add_argument("--repo", type=str, default=".", help="Path to the repository")
     parser.add_argument("--top", type=int, default=3, help="Number of files to extract")
-    parser.add_argument("--agent", type=str, default="free-claude-code", help="The AI CLI to route to (free-claude-code, ollama, claude)")
+    parser.add_argument("--agent", type=str, default="claude", help="The AI CLI to route to (claude, ollama, free-claude-code)")
     parser.add_argument("--dry-run", action="store_true", help="Just print the context, do not execute AI")
     
     args = parser.parse_args()

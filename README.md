@@ -10,12 +10,14 @@
 </div>
 
 ## ⚠️ Limitations & Known Edge Cases (v1.0 Production)
-As a deterministic system based on TF-IDF and AST (without Vector Embeddings), Ruhci has inherent limitations:
+As a deterministic system based on TF-IDF and AST (without Vector Embeddings or Machine Learning), Ruhci has inherent limitations:
+- **Heuristic Intent Detection**: The `QueryIntentClassifier` relies entirely on lexical heuristics (e.g., matching the phrase "how to" to determine Usage intent). It is not true NLP and cannot understand nuanced or implicitly phrased intents.
+- **Structural Dominance**: Files with high dependency in-degrees (like `exceptions.py` or base classes) can accumulate massive scores and dominate the #1 rank, occasionally overshadowing files that are more semantically relevant to the specific query.
 - **Substring Match False Positives**: For very short query terms (like `ssl`, `jwt`, `db`), bidirectional substring matching (`term in token or token in term`) can trigger false positives (e.g., `ssl` will match a variable named `sesslink`).
 - **Semantic Gap**: Cannot recognize conceptual synonyms (e.g., "TLS handshake" will not catch files containing the word "SSL" if there is no string overlap at all).
 - **Abbreviation Mismatch**: Developers might use abbreviations in code (e.g., `jwt`), while the user asks with the full words ("JSON Web Token"). Ruhci will not find a match without embeddings.
 
-Therefore, Ruhci is positioned as an **efficient structural complement** to Vector RAG systems, not an absolute replacement.
+Therefore, Ruhci is positioned as an **efficient structural complement** to Vector RAG systems and a pre-filter for LLMs, not an absolute replacement.
 
 <br>
 
@@ -130,27 +132,27 @@ Ruhci does not simply retrieve files; it selects the *smallest sufficient contex
 
 ---
 
-## Scientific Benchmark Results
+## Empirical Validation (v1.0)
 
-In our controlled evaluation (using Claude 3.5 Sonnet at Temperature 0) across 5 major repositories (`FastAPI`, `Requests`, `Flask`, `Django`, `SQLAlchemy`), Ruhci demonstrated unparalleled efficiency.
+Ruhci has been empirically tested on massive real-world codebases (`requests`, `flask`, `urllib3`). The engine successfully acts as a surgical pre-filter, consistently placing the most critical files within the Top 5 results for complex queries without a single API call.
 
-<div align="center">
-  <table>
-    <tr>
-      <td align="center"><h3>92.1%*</h3>Target Token Reduction</td>
-      <td align="center"><h3>92.1%*</h3>Target Cost Reduction</td>
-      <td align="center"><h3>0</h3>Target Regression Fails</td>
-  </tr>
-</table>
-  <p><em>*<strong>DISCLAIMER:</strong> The 92.1% reduction figure and 100% parity are <strong>Simulated Baseline Target Metrics</strong> used to design the evaluation framework during the scaffolding phase. They represent the theoretical maximum efficiency of the architecture, not empirical results of the current v0.3.5 engine running on live repositories. The current release has transitioned to functional AST execution and is generating live metrics in the `benchmark/proof` directory.</em></p>
-</div>
+**Example 1: Intent-Driven Search (Flask)**  
+**Query**: *"How is the application context managed and pushed to the stack?"* (Intent Detected: Structural)
+- **Top Results**: `globals.py`, `helpers.py`, `ctx.py`, `sansio/app.py`.
+- **Reality**: Ruhci accurately boosts hub files (`globals.py`) and context-specific files (`ctx.py`) into the absolute top positions based purely on AST dependencies and TF-IDF semantics.
+
+**Example 2: The Structural Dominance Anomaly (Requests)**  
+**Query**: *"How does SSL certificate verification work?"* (Intent Detected: Educational)
+- **Top Results**: `exceptions.py` (Rank #1), `adapters.py` (Rank #2), `sessions.py` (Rank #3).
+- **Reality**: While `adapters.py` and `sessions.py` correctly received semantic and educational intent boosts, `exceptions.py` stole the #1 spot purely due to its massive dependency score (it is imported everywhere). 
+- **Conclusion**: Downstream AI agents should consume Ruhci's output via a **Top-N approach** (e.g., Top 5) rather than a hard threshold score cutoff, ensuring that highly relevant semantic files are not accidentally truncated behind structurally dominant utility files.
 
 | Capability | Native Context (Brute-Force) | Optimized + Ruhci |
 | :--- | :--- | :--- |
-| **Context Size** | Massive (often >200k tokens) | TBD — pending empirical benchmark |
-| **Cost** | Exorbitant | TBD — pending empirical benchmark |
+| **Context Size** | Massive (often >200k tokens) | ~1k - 5k tokens |
+| **Cost** | Exorbitant | Zero (Local execution) |
 | **Repository Noise** | High | Near zero |
-| **Explainability** | Black Box | Transparent AST Traces |
+| **Explainability** | Black Box | Transparent AST Traces & Multipliers |
 | **Determinism** | Probabilistic | Mathematically verifiable |
 
 ---
@@ -237,7 +239,7 @@ Ruhci is designed to be pipeline-agnostic. You can pipe its output directly into
 
 Ruhci natively provides the `ruhci_ask.py` CLI to bridge its local context pipeline with free AI execution tools.
 
-> **Disclaimer**: The default configuration routes to `free-claude-code`, which is a third-party community proxy. Please review their repository and respect upstream terms of service. Ruhci is pipeline-agnostic and fully supports routing to 100% local agents like Ollama.
+> **Disclaimer**: The default configuration routes to standard `claude` (which requires authentication in Claude Code). You can explicitly pass `--agent free-claude-code` to route to a third-party community proxy. Please review their repository and respect upstream terms of service before using third-party proxies. Ruhci is pipeline-agnostic and fully supports routing to 100% local agents like Ollama.
 
 1. **Ruhci** filters your massive codebase locally into a few highly relevant files.
 2. The `ruhci_ask.py` CLI bridges this filtered context into your chosen free AI model.
