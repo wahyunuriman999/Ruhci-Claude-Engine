@@ -2,7 +2,7 @@ class ContextPruner:
     def __init__(self, mode="precision"):
         self.mode = mode
         if mode == "precision":
-            self.abs_threshold = 0.65
+            self.abs_threshold = 0.25 # Lowered from 0.65 to fit realistic 0.3-0.7 score ranges
             self.rel_ratio = 0.70
             self.gap_threshold = 0.25
         else: # exploration

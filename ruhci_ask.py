@@ -14,10 +14,13 @@ def get_top_files_content(engine: RuhciEngine, query: str, top_n: int = 3) -> st
         
     context_text = "Here are the most relevant files from the repository:\n\n"
     
-    for i, res in enumerate(results[:top_n]):
+    valid_count = 0
+    for i, res in enumerate(results):
+        if valid_count >= top_n:
+            break
+            
         filepath = res['filepath']
         score = res['score']
-        print(f"  [{i+1}] Selected: {filepath} (Score: {score:.3f})")
         
         full_path = os.path.join(engine.target_dir, filepath)
         try:
@@ -30,7 +33,21 @@ def get_top_files_content(engine: RuhciEngine, query: str, top_n: int = 3) -> st
             except Exception:
                 content = "<unreadable binary or missing file>"
                 
+        # Issue #5: Check if file is essentially empty or just a scaffold
+        lines = [line.strip() for line in content.split('\n') if line.strip() and not line.strip().startswith('#')]
+        
+        is_scaffold = False
+        if len(lines) < 10:
+            if any("NotImplementedError" in line or "pass" in line for line in lines):
+                is_scaffold = True
+                
+        if not content.strip() or is_scaffold:
+            print(f"  [Skip] Ignored scaffold/empty file: {filepath}")
+            continue
+            
+        print(f"  [{valid_count+1}] Selected: {filepath} (Score: {score:.3f})")
         context_text += f"--- FILE: {filepath} ---\n```python\n{content}\n```\n\n"
+        valid_count += 1
         
     return context_text
 

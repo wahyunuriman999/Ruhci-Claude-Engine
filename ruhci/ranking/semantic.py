@@ -12,6 +12,8 @@ class ContentAnalyzer:
     def __init__(self):
         # Cache to avoid re-reading the same file multiple times if called iteratively
         self._content_cache = {}
+        # Reverse index mapping relative paths to full paths for O(1) lookups
+        self._path_index = {}
 
     def _read_file(self, filepath: str) -> str:
         if filepath in self._content_cache:

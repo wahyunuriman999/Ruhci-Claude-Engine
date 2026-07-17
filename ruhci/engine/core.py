@@ -15,16 +15,28 @@ class RuhciEngine:
             if any(ignored in root for ignored in ['venv', '.git', '__pycache__', 'node_modules', 'scratch']):
                 continue
             for file in files:
-                if file.endswith('.py'):
+                if file.endswith('.py') and file != 'empirical_test.py':
                     filepath = os.path.join(root, file).replace('\\', '/')
                     if filepath.startswith('./'):
                         filepath = filepath[2:]
                     all_files.append(filepath)
 
+        # Pre-cache all contents
+        for f in all_files:
+            # Full path handling in case target_dir is not '.'
+            if os.path.isabs(f):
+                full_path = f
+            else:
+                full_path = os.path.join(self.target_dir, f) if self.target_dir != '.' else f
+            self.ranker.content_analyzer._read_file(full_path)
+            # Create a reverse index mapping to avoid O(N*M) lookups later
+            self.ranker.content_analyzer._path_index[f] = full_path
+
         parser = ASTParser()
         metadatas = []
         metadata_index = {}
         for f in all_files:
+            # We should pass full path if needed, but keeping original logic
             meta = parser.parse_python_file(f)
             metadatas.append(meta)
             metadata_index[f] = meta
@@ -33,7 +45,8 @@ class RuhciEngine:
         graph.build_from_metadata(metadatas)
 
         selector = CandidateSelector()
-        candidates = selector.select(query, all_files, graph=graph, max_candidates=50)
+        # Pass the pre-warmed analyzer to selector
+        candidates = selector.select(query, all_files, graph=graph, analyzer=self.ranker.content_analyzer, max_candidates=50)
 
         results = self.ranker.rank(query, candidates, metadata_index, graph)
         

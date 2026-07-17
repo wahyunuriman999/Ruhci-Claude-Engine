@@ -118,6 +118,11 @@ class HybridRankerV02:
             if "test" in filepath_lower and "Usage" not in intents and "Bug Fix" not in intents:
                 final_score *= 0.5
                 
+            # Issue #1: Penalize container files to prevent Structural Dominance
+            if any(container in filepath_lower for container in ["exceptions.py", "__init__.py", "compat.py", "types.py", "interfaces.py"]):
+                final_score *= 0.1 # Massive penalty
+
+                
             ranked_results.append({
                 "file": filepath,
                 "score": final_score,
