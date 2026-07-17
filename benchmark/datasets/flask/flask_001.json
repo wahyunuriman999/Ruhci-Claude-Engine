@@ -1,0 +1,14 @@
+{
+    "id": "flask_001",
+    "repository": "flask",
+    "task": "Medium",
+    "query": "RuntimeError: Working outside of application context. I need to push the context manually.",
+    "primary_file": "flask/ctx.py",
+    "required_files": [
+        "flask/ctx.py",
+        "flask/app.py"
+    ],
+    "expected_rank": [
+        "flask/ctx.py"
+    ]
+}

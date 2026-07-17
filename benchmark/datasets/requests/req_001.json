@@ -1,0 +1,15 @@
+{
+    "id": "req_001",
+    "repository": "requests",
+    "task": "Easy",
+    "query": "How do I completely disable SSL certificate verification for my session?",
+    "primary_file": "requests/sessions.py",
+    "required_files": [
+        "requests/sessions.py",
+        "requests/adapters.py"
+    ],
+    "expected_rank": [
+        "requests/sessions.py",
+        "requests/adapters.py"
+    ]
+}

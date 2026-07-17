@@ -1,0 +1,14 @@
+{
+    "id": "flask_003",
+    "repository": "flask",
+    "task": "Medium",
+    "query": "I want to return a JSON response automatically. Where is the jsonify function defined?",
+    "primary_file": "flask/json/__init__.py",
+    "required_files": [
+        "flask/json/__init__.py"
+    ],
+    "expected_rank": [
+        "flask/json/__init__.py",
+        "flask/helpers.py"
+    ]
+}

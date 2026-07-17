@@ -1,0 +1,13 @@
+{
+    "id": "flask_004",
+    "repository": "flask",
+    "task": "Hard",
+    "query": "How can I register a custom URL converter (like <my_type:id>) in the app url_map?",
+    "primary_file": "flask/app.py",
+    "required_files": [
+        "flask/app.py"
+    ],
+    "expected_rank": [
+        "flask/app.py"
+    ]
+}

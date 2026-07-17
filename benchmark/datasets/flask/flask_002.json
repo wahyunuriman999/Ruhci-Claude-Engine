@@ -1,0 +1,13 @@
+{
+    "id": "flask_002",
+    "repository": "flask",
+    "task": "Easy",
+    "query": "How do I register a function to run before every request using the @before_request decorator?",
+    "primary_file": "flask/app.py",
+    "required_files": [
+        "flask/app.py"
+    ],
+    "expected_rank": [
+        "flask/app.py"
+    ]
+}

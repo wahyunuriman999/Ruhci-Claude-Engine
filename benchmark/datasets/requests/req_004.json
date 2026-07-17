@@ -1,0 +1,13 @@
+{
+    "id": "req_004",
+    "repository": "requests",
+    "task": "Medium",
+    "query": "I am encountering a TooManyRedirects error when a site redirects in an infinite loop. Where is the redirect limit enforced?",
+    "primary_file": "requests/sessions.py",
+    "required_files": [
+        "requests/sessions.py"
+    ],
+    "expected_rank": [
+        "requests/sessions.py"
+    ]
+}

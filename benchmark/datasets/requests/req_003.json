@@ -1,0 +1,13 @@
+{
+    "id": "req_003",
+    "repository": "requests",
+    "task": "Hard",
+    "query": "I want to increase the connection pool size and max retries using HTTPAdapter",
+    "primary_file": "requests/adapters.py",
+    "required_files": [
+        "requests/adapters.py"
+    ],
+    "expected_rank": [
+        "requests/adapters.py"
+    ]
+}

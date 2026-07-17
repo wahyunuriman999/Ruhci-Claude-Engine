@@ -1,0 +1,13 @@
+{
+    "id": "req_002",
+    "repository": "requests",
+    "task": "Medium",
+    "query": "The json parameter is not serializing my datetime objects properly. Where is the payload prepared?",
+    "primary_file": "requests/models.py",
+    "required_files": [
+        "requests/models.py"
+    ],
+    "expected_rank": [
+        "requests/models.py"
+    ]
+}
