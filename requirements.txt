@@ -10,3 +10,7 @@ orjson
 gitpython
 tree-sitter
 tree-sitter-python
+
+# Testing
+pytest>=7.0
+pytest-asyncio>=0.23

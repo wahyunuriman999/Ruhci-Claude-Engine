@@ -10,3 +10,8 @@ scaffold*.py
 *_clone
 
 RUHCI_ARCHITECTURE_REVIEW.md
+
+# Virtual environment
+.venv/
+venv/
+env/
