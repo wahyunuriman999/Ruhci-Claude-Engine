@@ -7,7 +7,7 @@
 
 from typing import Dict, Any, Optional
 
-class SystemOrchestrator:
+class RuhciOrchestrator:
     """Orchestrates interaction between subsystems (Memory, Router, Decision, Planner)."""
     
     def __init__(self):
