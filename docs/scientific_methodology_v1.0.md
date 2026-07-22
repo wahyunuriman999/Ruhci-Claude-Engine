@@ -38,6 +38,9 @@ Ruhci employs a multi-stage deterministic pipeline:
 - **Regression Failure**: Number of tasks where Native passed but Ruhci failed due to missing dependencies.
 
 ## 8. Results
+
+> **DISCLAIMER**: The following metrics are *Simulated Baseline Target Metrics* generated during the initial framework scaffolding to validate the evaluation pipeline. They do not represent empirical measurements of the live v0.1 engine. We are actively transitioning from simulation to real empirical benchmarking.
+
 | Metric | Native | Claude + Ruhci |
 |---|---|---|
 | Context Size (Net Input) | 100% | 7.9% |
@@ -46,9 +49,7 @@ Ruhci employs a multi-stage deterministic pipeline:
 | Context Sufficiency Score | - | 100.0% |
 | Regression Failure | - | 0 |
 
-## Core Findings (Simulated Target Metrics)
-
-> **DISCLAIMER**: The following metrics are *Simulated Baseline Target Metrics* generated during the initial framework scaffolding to validate the evaluation pipeline. They do not represent empirical measurements of the live v0.1 engine. We are actively transitioning from simulation to real empirical benchmarking.
+## Core Findings
 
 Ruhci targets a **92.1% net reduction** in token usage and cost. The theoretical Context Sufficiency Score of 100.0% alongside 0 Regression Failures aims to prove that deterministic context pruning successfully filters noise without stripping vital execution graphs or hidden dependencies.
 
