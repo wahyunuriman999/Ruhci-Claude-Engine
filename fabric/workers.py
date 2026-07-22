@@ -5,11 +5,33 @@
 # All rights reserved.
 # ==========================================
 
-from loguru import logger
+from typing import Any, Callable, Dict, List
 
-class RuntimeWorker:
-    def __init__(self, worker_id, capabilities):
-        self.worker_id = worker_id
-        self.capabilities = capabilities
-        self.load = 0.0
-        self.health = "OK"
+
+class WorkerPool:
+    """Manages a pool of named callable workers and broadcasts messages to them."""
+
+    def __init__(self):
+        self._workers: Dict[str, Callable] = {}
+
+    def add_worker(self, name: str, func: Callable) -> None:
+        self._workers[name] = func
+
+    def remove_worker(self, name: str) -> None:
+        self._workers.pop(name, None)
+
+    def broadcast(self, message: Dict) -> Dict[str, Any]:
+        """Call every worker with the message. Returns {name: result}."""
+        results: Dict[str, Any] = {}
+        for name, func in self._workers.items():
+            try:
+                results[name] = func(message)
+            except Exception as e:
+                results[name] = {"error": str(e)}
+        return results
+
+    def get_worker_count(self) -> int:
+        return len(self._workers)
+
+    def list_workers(self) -> List[str]:
+        return list(self._workers.keys())

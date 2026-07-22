@@ -5,12 +5,38 @@
 # All rights reserved.
 # ==========================================
 
-from loguru import logger
+from typing import Any, Callable, Dict, List, Optional
+
 
 class CapabilityRegistry:
+    """Central registry for all system capabilities."""
+
     def __init__(self):
-        self.installed = ["python", "typescript", "json", "dockerfile"]
-        
-    def detect(self, repo_path: str):
-        logger.info("Building Capability Graph (Python, Docker, MCP, React, etc.)")
-        return ["python", "docker"]
+        self._caps: Dict[str, Dict] = {}
+
+    def register(
+        self,
+        name: str,
+        description: str,
+        handler: Optional[Callable] = None,
+        metadata: Optional[Dict] = None,
+    ) -> None:
+        self._caps[name] = {
+            "description": description,
+            "handler": handler,
+            "metadata": metadata or {},
+        }
+
+    def get(self, name: str) -> Optional[Dict]:
+        return self._caps.get(name)
+
+    def list_all(self) -> List[str]:
+        return list(self._caps.keys())
+
+    def invoke(self, name: str, **kwargs) -> Any:
+        cap = self._caps.get(name)
+        if cap is None:
+            raise KeyError(f"Capability '{name}' not registered.")
+        if cap["handler"] is None:
+            raise RuntimeError(f"Capability '{name}' has no handler.")
+        return cap["handler"](**kwargs)

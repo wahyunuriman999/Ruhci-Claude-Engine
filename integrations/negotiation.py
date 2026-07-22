@@ -5,13 +5,22 @@
 # All rights reserved.
 # ==========================================
 
-from loguru import logger
+from typing import Dict, List
+
 
 class CapabilityNegotiator:
-    def negotiate(self, required_caps, engine_caps):
-        logger.info(f"Negotiating capabilities. Required: {required_caps}, Engine: {engine_caps}")
-        missing = [cap for cap in required_caps if cap not in engine_caps]
-        if missing:
-            logger.warning(f"Missing capabilities: {missing}")
-            return False
-        return True
+    """Negotiates which capabilities are satisfied when two systems connect."""
+
+    def negotiate(self, offered: List[str], required: List[str]) -> Dict[str, bool]:
+        """Return {capability: satisfied} for each required capability."""
+        offered_set = set(offered)
+        return {cap: cap in offered_set for cap in required}
+
+    def get_missing(self, offered: List[str], required: List[str]) -> List[str]:
+        """Return the list of required capabilities not present in offered."""
+        offered_set = set(offered)
+        return [cap for cap in required if cap not in offered_set]
+
+    def is_compatible(self, offered: List[str], required: List[str]) -> bool:
+        """Return True if all required capabilities are offered."""
+        return not self.get_missing(offered, required)

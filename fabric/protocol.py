@@ -5,9 +5,33 @@
 # All rights reserved.
 # ==========================================
 
-from pydantic import BaseModel
-from typing import Dict, Any
+import json
+import time
+from dataclasses import dataclass, field, asdict
+from typing import Any, Dict
 
-class KernelMessage(BaseModel):
-    msg_type: str  # COMMAND, RESPONSE, EVENT, SNAPSHOT
+
+@dataclass
+class AgentMessage:
+    sender: str
+    recipient: str
+    message_type: str
     payload: Dict[str, Any]
+    timestamp: float = field(default_factory=time.time)
+
+
+class AgentProtocol:
+    """Encodes and decodes AgentMessage objects to/from JSON strings."""
+
+    def encode(self, msg: AgentMessage) -> str:
+        return json.dumps(asdict(msg))
+
+    def decode(self, raw: str) -> AgentMessage:
+        data = json.loads(raw)
+        return AgentMessage(
+            sender=data["sender"],
+            recipient=data["recipient"],
+            message_type=data["message_type"],
+            payload=data.get("payload", {}),
+            timestamp=data.get("timestamp", time.time()),
+        )
