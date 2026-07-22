@@ -11,7 +11,7 @@ def stem_term(term: str) -> str:
             return term[:-1]
         return term
         
-    for suffix in ["ing", "ed", "s", "es", "ly", "tion", "ity", "ment", "able", "ible"]:
+    for suffix in ["ible", "able", "ment", "tion", "ity", "ing", "ly", "es", "ed", "s"]:
         if term.endswith(suffix):
             return term[:-len(suffix)]
     return term

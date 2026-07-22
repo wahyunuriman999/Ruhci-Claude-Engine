@@ -5,9 +5,15 @@ build-backend = "hatchling.build"
 [project]
 name = "ruhci-engine"
 version = "1.0.0"
+description = "Deterministic context intelligence engine for AI coding agents"
+requires-python = ">=3.10"
+license = {text = "MIT"}
 dependencies = [
     "tree-sitter",
     "tree-sitter-python",
     "networkx",
     "loguru"
 ]
+
+[project.scripts]
+ruhci = "ruhci_ask:main"

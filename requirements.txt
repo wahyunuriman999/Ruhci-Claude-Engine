@@ -5,10 +5,8 @@ rich
 loguru
 networkx
 tiktoken
-diskcache
 httpx
 orjson
-xxhash
 gitpython
 tree-sitter
 tree-sitter-python
