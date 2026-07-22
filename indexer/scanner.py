@@ -8,7 +8,8 @@
 import os
 from pathlib import Path
 from typing import List
-from loguru import logger
+import logging
+logger = logging.getLogger(__name__)
 
 class RepositoryScanner:
     def __init__(self, root_dir: str):
