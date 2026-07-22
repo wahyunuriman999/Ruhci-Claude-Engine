@@ -5,17 +5,29 @@
 # All rights reserved.
 # ==========================================
 
-from loguru import logger
+from typing import Dict, Any, List
+import time
 
-class CheckpointManager:
-    def snapshot(self, state_id: str):
-        logger.info(f"Snapshotting state {state_id}")
+class CognitiveStateManager:
+    """Manages overarching cognitive state transitions and snapshots across segments."""
+    
+    def __init__(self):
+        self.history: List[Dict[str, Any]] = []
         
-    def rollback(self, state_id: str):
-        logger.warning(f"Rolling back to {state_id}")
+    def capture_state(self, blackboard_snapshot: Dict[str, Any], segments_snapshot: Dict[str, Any]) -> str:
+        """Takes a full snapshot of the cognitive apparatus."""
+        state_id = f"cog_{int(time.time() * 1000)}"
+        self.history.append({
+            "id": state_id,
+            "timestamp": time.time(),
+            "blackboard": blackboard_snapshot,
+            "segments": segments_snapshot
+        })
+        return state_id
         
-    def resume(self, state_id: str):
-        logger.info(f"Resuming from {state_id}")
-        
-    def fork(self, state_id: str, new_branch: str):
-        logger.info(f"Forking {state_id} into branch {new_branch}")
+    def get_state(self, state_id: str) -> Dict[str, Any]:
+        """Retrieves a specific cognitive state by ID."""
+        for state in self.history:
+            if state["id"] == state_id:
+                return state
+        raise KeyError(f"Cognitive state {state_id} not found.")

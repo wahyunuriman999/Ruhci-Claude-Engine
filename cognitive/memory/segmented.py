@@ -5,20 +5,31 @@
 # All rights reserved.
 # ==========================================
 
-from loguru import logger
+from typing import Dict, Any, Optional
 
-class ConversationMemory:
-    def __init__(self): self.history = []
-
-class RepositoryMemory:
-    def __init__(self): self.evolution = []
+class SegmentedCognition:
+    """Isolates memory context into distinct segments (e.g. 'planning', 'coding', 'review')."""
     
-    def evolve_summary(self, fingerprint: str, new_diff: str):
-        logger.info(f"Evolving repository summary for {fingerprint}")
-        # Logic to merge new_diff rather than re-summarize
-
-class ExecutionMemory: pass
-class SemanticMemory: pass
-class CheckpointMemory: pass
-class TemporaryMemory: pass
-class SessionMemory: pass
+    def __init__(self):
+        self.segments: Dict[str, Dict[str, Any]] = {}
+        
+    def create_segment(self, segment_name: str) -> None:
+        """Initializes a new isolated memory segment."""
+        if segment_name not in self.segments:
+            self.segments[segment_name] = {}
+            
+    def write_segment(self, segment_name: str, key: str, value: Any) -> None:
+        """Writes data to a specific segment."""
+        if segment_name not in self.segments:
+            self.create_segment(segment_name)
+        self.segments[segment_name][key] = value
+        
+    def read_segment(self, segment_name: str, key: str) -> Optional[Any]:
+        """Reads data from a specific segment."""
+        segment = self.segments.get(segment_name, {})
+        return segment.get(key)
+        
+    def drop_segment(self, segment_name: str) -> None:
+        """Removes a cognitive segment entirely."""
+        if segment_name in self.segments:
+            del self.segments[segment_name]

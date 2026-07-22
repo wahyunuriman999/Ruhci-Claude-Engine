@@ -6,19 +6,19 @@
 # ==========================================
 
 import hashlib
-from loguru import logger
+import json
+from typing import Any
 
-class FingerprintGenerator:
+class StateFingerprint:
+    """Generates deterministic hashes for cognitive states to identify duplication or cycles."""
+    
     @staticmethod
-    def get_fast_fingerprint(content: str) -> str:
-        return hashlib.sha256(content.encode('utf-8')).hexdigest()
-        
-    @staticmethod
-    def get_ast_fingerprint(ast_tree, normalized_code: str, deps_version: str) -> str:
-        base = f"{str(ast_tree)}_{normalized_code}_{deps_version}"
-        return hashlib.sha256(base.encode('utf-8')).hexdigest()
-        
-    @staticmethod
-    def get_semantic_fingerprint(embedding_vector) -> str:
-        # Stub
-        return hashlib.md5(str(embedding_vector).encode('utf-8')).hexdigest()
+    def generate(state_dict: dict[str, Any]) -> str:
+        """Creates an MD5 hash representing the normalized JSON of a state dictionary."""
+        # Sort keys to ensure deterministic ordering
+        try:
+            serialized = json.dumps(state_dict, sort_keys=True, separators=(',', ':'))
+            return hashlib.md5(serialized.encode('utf-8')).hexdigest()
+        except TypeError:
+            # Fallback if state contains non-serializable objects
+            return hashlib.md5(str(state_dict).encode('utf-8')).hexdigest()

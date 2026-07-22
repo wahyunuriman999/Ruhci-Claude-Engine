@@ -5,24 +5,35 @@
 # All rights reserved.
 # ==========================================
 
-from pydantic import BaseModel
-from loguru import logger
-
-class TokenAllocation(BaseModel):
-    system: int = 15000
-    skills: int = 10000
-    context: int = 80000
-    history: int = 25000
-    tool: int = 20000
-    response: int = 30000
-    reserve: int = 20000
+class TokenBudgetManager:
+    """Tracks and enforces LLM context window limits."""
     
-class BudgetManager:
-    def __init__(self, total_budget: int = 200000):
-        self.total = total_budget
-        self.allocation = TokenAllocation()
-        logger.info(f"BudgetManager initialized with {total_budget} tokens.")
+    def __init__(self, max_tokens: int = 150000):
+        self.max_tokens = max_tokens
+        self.current_usage = 0
+        self.reserves = {
+            "system_prompt": 2000,
+            "safety_margin": 1000,
+            "output_generation": 4000
+        }
         
-    def can_fit(self, category: str, requested: int) -> bool:
-        allowed = getattr(self.allocation, category, 0)
-        return requested <= allowed
+    @property
+    def available_context(self) -> int:
+        """Calculates how many tokens are available for dynamic context."""
+        reserved = sum(self.reserves.values())
+        return max(0, self.max_tokens - reserved - self.current_usage)
+        
+    def consume(self, tokens: int) -> bool:
+        """Attempts to consume tokens. Returns False if budget exceeded."""
+        if tokens > self.available_context:
+            return False
+        self.current_usage += tokens
+        return True
+        
+    def release(self, tokens: int) -> None:
+        """Frees up token budget."""
+        self.current_usage = max(0, self.current_usage - tokens)
+        
+    def reset(self) -> None:
+        """Resets the usage tracker."""
+        self.current_usage = 0
