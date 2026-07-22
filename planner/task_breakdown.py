@@ -5,66 +5,29 @@
 # All rights reserved.
 # ==========================================
 
-import json
-from typing import List, Dict, Any
+from typing import Dict, Any, List
+from .execution_plan import Task, ExecutionPlan
 
-class TaskBreakdown:
-    """
-    Bertanggung jawab untuk memecah prompt kompleks manusia menjadi 
-    sub-tugas yang terstruktur, kecil, dan dapat dieksekusi secara otonom.
-    """
+class TaskBreakdownEngine:
+    """Responsible for breaking down high-level objectives into sequential tasks."""
     
-    def __init__(self, llm_client=None):
-        self.llm_client = llm_client
+    def __init__(self):
+        pass
         
-    def breakdown_prompt(self, user_prompt: str) -> List[Dict[str, Any]]:
+    def breakdown(self, objective: str, plan_id: str) -> ExecutionPlan:
         """
-        Memecah prompt besar menggunakan LLM.
+        Creates an ExecutionPlan from a high-level objective.
+        Currently a naive implementation to be replaced with LLM call.
         """
-        if not self.llm_client:
-            # Fallback jika belum ada LLM client terinjeksi
-            return self._mock_breakdown(user_prompt)
-            
-        system_instruction = (
-            "Anda adalah AI Planner. Pecah tugas dari user ke dalam sub-tugas kecil. "
-            "Keluarkan murni array JSON dengan format: "
-            "[{\"id\": 1, \"title\": \"nama tugas\", \"description\": \"deskripsi detail\", \"dependencies\": []}]"
-        )
+        plan = ExecutionPlan(plan_id, objective)
         
-        try:
-            # Asumsi interface dasar LLM client
-            response = self.llm_client.chat(
-                messages=[
-                    {"role": "system", "content": system_instruction},
-                    {"role": "user", "content": user_prompt}
-                ]
-            )
-            # Membersihkan tag markdown jika ada
-            clean_json = response.strip().strip("```json").strip("```").strip()
-            return json.loads(clean_json)
-        except Exception as e:
-            print(f"[TaskBreakdown] Gagal memecah tugas via LLM: {e}")
-            return self._mock_breakdown(user_prompt)
-            
-    def _mock_breakdown(self, prompt: str) -> List[Dict[str, Any]]:
-        """Mock sederhana jika LLM gagal atau tidak tersedia."""
-        return [
-            {
-                "id": 1,
-                "title": "Analisa Kebutuhan",
-                "description": f"Menganalisa prompt user: '{prompt}'",
-                "dependencies": []
-            },
-            {
-                "id": 2,
-                "title": "Eksekusi Utama",
-                "description": "Menulis kode implementasi berdasarkan analisa.",
-                "dependencies": [1]
-            },
-            {
-                "id": 3,
-                "title": "Verifikasi Kode",
-                "description": "Melakukan pengujian pada kode yang dihasilkan.",
-                "dependencies": [2]
-            }
-        ]
+        # Fake breakdown logic
+        t1 = Task(id="task_1", description="Analyze the objective requirements")
+        t2 = Task(id="task_2", description="Gather required context", dependencies=["task_1"])
+        t3 = Task(id="task_3", description="Execute the plan", dependencies=["task_2"])
+        
+        plan.add_task(t1)
+        plan.add_task(t2)
+        plan.add_task(t3)
+        
+        return plan

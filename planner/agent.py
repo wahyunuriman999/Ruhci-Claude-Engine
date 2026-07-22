@@ -5,50 +5,42 @@
 # All rights reserved.
 # ==========================================
 
-from typing import List, Optional, Literal, Dict, Any
-from pydantic import BaseModel, Field
-from loguru import logger
-from engine.base import BasePlanner
-from planner.prompts import PLANNER_SYSTEM_PROMPT
+from typing import Dict, Any, Optional
+import uuid
+from .task_breakdown import TaskBreakdownEngine
+from .execution_plan import ExecutionPlan
+from .priority import TaskPrioritizer
 
-class TaskNode(BaseModel):
-    task_id: str
-    description: str
-    priority: int = 1
-    dependencies: List[str] = Field(default_factory=list)
-    route_target: str = "ToolRouter"
-
-class PlanningResult(BaseModel):
-    objective: str
-    strategy: Literal["AUTO", "SEQUENTIAL", "CONCURRENT", "MIXED", "ADAPTIVE"] = "ADAPTIVE"
-    tasks: List[TaskNode] = Field(default_factory=list)
-    dependency_graph: Dict[str, List[str]] = Field(default_factory=dict)
-    estimated_tokens: int = 0
-    estimated_cost: float = 0.0
-    estimated_duration: int = 0
-    execution_order: List[str] = Field(default_factory=list)
-    parallel_groups: List[List[str]] = Field(default_factory=list)
-    risks: List[str] = Field(default_factory=list)
-    checkpoints: List[str] = Field(default_factory=list)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+class PlannerAgent:
+    """Agent responsible for creating and overseeing the execution of plans."""
     
-class PlanningAgent(BasePlanner):
-    def __init__(self, llm_client=None):
-        self.client = llm_client
-        logger.info("Initialized Enterprise PlanningAgent.")
+    def __init__(self):
+        self.breakdown_engine = TaskBreakdownEngine()
+        self.prioritizer = TaskPrioritizer()
+        self.active_plans: Dict[str, ExecutionPlan] = {}
         
-    async def create_plan(self, user_prompt: str) -> PlanningResult:
-        logger.info("PlanningAgent: Generating Execution Plan...")
-        # Stub logic
-        node1 = TaskNode(task_id="t1", description="Init", route_target="ToolRouter::bash_execution")
-        node2 = TaskNode(task_id="t2", description="Deploy", dependencies=["t1"])
+    def create_plan(self, objective: str) -> str:
+        """Creates a new execution plan for the given objective and returns its ID."""
+        plan_id = str(uuid.uuid4())
+        plan = self.breakdown_engine.breakdown(objective, plan_id)
+        self.active_plans[plan_id] = plan
+        return plan_id
         
-        result = PlanningResult(
-            objective="Simulated Objective",
-            strategy="ADAPTIVE",
-            tasks=[node1, node2],
-            dependency_graph={"t2": ["t1"], "t1": []},
-            estimated_tokens=1500,
-            execution_order=["t1", "t2"]
-        )
-        return result
+    def get_next_step(self, plan_id: str) -> Optional[Dict[str, Any]]:
+        """Gets the next highest-priority task to execute."""
+        plan = self.active_plans.get(plan_id)
+        if not plan or plan.is_complete():
+            return None
+            
+        runnable = plan.get_next_runnable_tasks()
+        if not runnable:
+            return None
+            
+        prioritized = self.prioritizer.prioritize(runnable)
+        return prioritized[0].to_dict()
+        
+    def report_result(self, plan_id: str, task_id: str, status: str, result: Any = None) -> None:
+        """Reports the result of a task back to the plan."""
+        plan = self.active_plans.get(plan_id)
+        if plan:
+            plan.update_task_status(task_id, status, result)
