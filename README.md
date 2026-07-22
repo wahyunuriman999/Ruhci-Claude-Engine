@@ -1,210 +1,260 @@
 <div align="center">
-  <h1 align="center">Ruhci Engine v1.0</h1>
-  <p align="center"><strong>Deterministic Context Intelligence Engine</strong></p>
-  <p><em>Repository Intelligence Layer for AI Coding Agents</em></p>
 
-  <p><strong>Don't make AI read everything. Make it read the right things.</strong></p>
+<h1>🧠 Ruhci Claude Engine</h1>
+<p><strong>Autonomous AI Agent Operating System</strong></p>
+<p><em>A full-stack cognitive runtime for building, running, and orchestrating autonomous AI agents</em></p>
 
-  [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
-  [![Status](https://img.shields.io/badge/status-Beta-yellow.svg)](#)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-4%20passed%20%7C%200%20failed-brightgreen.svg)](#)
+[![Build](https://img.shields.io/badge/build-7-orange.svg)](#)
+[![Status](https://img.shields.io/badge/status-Active%20Development-yellow.svg)](#)
+
+<br/>
+
+> **"Don't make AI read everything. Make it think — autonomously."**
+
 </div>
 
-<br>
+---
 
-> **200,000+ tokens of code. One bug.**
-> 
-> Traditional AI: *"Read everything."*
-> 
-> Ruhci: *"Find the evidence first."*
+## ⚡ What Is Ruhci?
+
+Ruhci is a **full AI Agent Operating System** written in Python. It is not a wrapper around ChatGPT. It is not a chatbot. It is a runtime that gives AI agents **memory, cognition, planning, routing, reflection, and execution** — all as distinct, wired subsystems.
+
+Think of it as the **kernel** of an AI computer.
+
+```
+Developer Objective
+        │
+        ▼
+┌─────────────────────────────────────────────┐
+│              RuhciOrchestrator               │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+│  │  Memory  │  │  Router  │  │ Planner  │  │
+│  └──────────┘  └──────────┘  └──────────┘  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+│  │Decision  │  │Reflection│  │Execution │  │
+│  └──────────┘  └──────────┘  └──────────┘  │
+└─────────────────────────────────────────────┘
+        │
+        ▼
+   Autonomous Result
+```
 
 ---
 
-## ⚡ Why Ruhci Exists
+## 🏗️ Architecture — Subsystems
 
-Modern LLMs can read millions of tokens. **That doesn't mean they should.**
+Ruhci is organized as a layered OS. Each subsystem is an independent, importable Python module with real logic.
 
-Feeding an AI hundreds of thousands of tokens of raw repository files introduces:
-- 💸 **Exorbitant Cost**
-- 🐢 **High Latency**
-- 🌪️ **Extreme Attention Noise**
-- 📉 **Lost-in-the-Middle Failures**
+### 🧬 Core Engine (`engine/`)
+| Module | Class | Capability |
+|---|---|---|
+| `orchestrator.py` | `RuhciOrchestrator` | Central command, session state, async `run()` |
+| `core.py` | `RuhciEngine` | Boot/shutdown lifecycle management |
 
-Ruhci solves this by acting as a **surgical pre-filter**. It retrieves only evidence-backed code before the LLM begins reasoning.
+### 🧠 Memory Subsystem (`memory/`)
+Persistent and working memory for agent context across turns.
+- **Episodic memory** — stores past interactions with timestamps
+- **Semantic memory** — stores factual knowledge as key-value
+- **Working memory** — short-term scratchpad for active reasoning
+- **Memory Consolidator** — merges and compresses old episodes
 
-### The Pipeline
+### 🧩 Cognitive Subsystem (`cognitive/`)
+Higher-order reasoning beyond simple retrieval.
+- **Reasoning engine** — multi-step chain-of-thought logic
+- **Metacognition** — the agent reflects on its own confidence
+- **Abstraction layer** — generalizes patterns across problems
 
-**❌ Without Ruhci (Brute-Force Context)**
-`Developer` ➔ `Claude` ➔ `280,000+ tokens` ➔ 💸 ➔ `Slow & Noisy`
+### 🔀 Router Subsystem (`router/`)
+| Class | Responsibility |
+|---|---|
+| `TaskRouter` | Routes tasks to agents by keyword matching |
+| `ToolRouter` | Routes tool calls to executor functions |
+| `ModelRouter` | Selects the right LLM model per task type |
+| `ContextRouter` | Routes context requests to the right memory store |
+| `UniversalRegistry` | Global registrar for all system components |
 
-**✅ With Ruhci (Evidence-Backed Context)**
-`Developer` ➔ `Ruhci` ➔ `~3,800 tokens` ➔ `Claude` ➔ ⚡ ➔ `Fast, Cheap & Sharp`
+### 🧭 Planner (`planner/`)
+Breaks ambiguous objectives into executable task trees.
+- **Priority scheduler** — heapq-based, priority-first execution
+- **Task breakdown** — recursive decomposition of objectives
+- **Planning agent** — full `PlanningResult` output with strategy selection
+
+### 🏛️ Decision Engine (`decision/`)
+Chooses actions when multiple paths are possible.
+- **Consensus** — weighted voting across multiple agent signals
+- **Policy evaluator** — rule-based constraint checking
+
+### 🪞 Reflection Subsystem (`reflection/`)
+Agents that audit their own work.
+- **`AutonomousReflector`** — records action/outcome history, computes success rate, auto-triggers pause at < 30% success
+- **`AdaptiveOrchestrator`** — adjusts strategy from `aggressive` → `balanced` → `conservative` based on rolling metrics
+
+### 🌐 Fabric — Agent Mesh (`fabric/`)
+Inter-agent communication infrastructure.
+| Class | Role |
+|---|---|
+| `MessageTransport` | In-memory per-agent message queue |
+| `AgentProtocol` | JSON encode/decode for `AgentMessage` dataclass |
+| `TaskScheduler` | heapq-based priority task runner |
+| `WorkerPool` | Named callable worker pool with broadcast |
+| `ServiceDiscovery` | Capability-based service registry with heartbeat |
+| `StateSynchronizer` | Versioned shared state across agents |
+
+### ⚙️ Kernel (`kernel/`)
+System-level services.
+| Class | Role |
+|---|---|
+| `KernelRegistry` | Thread-safe singleton service registry |
+| `CommandBus` | Pub-sub command dispatcher |
+| `RuhciLogger` | Structured JSON logger (wraps stdlib logging) |
+
+### 🗂️ Repository Subsystem (`repository/`)
+Deep static analysis of codebases — without LLM calls.
+| Class | Role |
+|---|---|
+| `RepositoryExplorer` | Walk + filter file trees |
+| `DependencyTracker` | AST-based import extraction |
+| `SymbolResolver` | Find where any class/function is defined |
+| `HierarchicalSummarizer` | Extract classes, functions, LOC per file |
+| `HybridChangeDetector` | MD5-based file change detection |
+| `SemanticIndex` | Inverted index for keyword search |
+| `EmbeddingIndexer` | Bag-of-words similarity search |
+| `ImportanceRanker` | Rank files by import frequency |
+| `DependencyGraphBuilder` | Build adjacency list + cycle detection |
+| `WorkspaceSnapshot` | Full workspace state capture + diff |
+
+### 🔌 Integrations & Extensions (`integrations/`, `capabilities/`, `extensions/`)
+| Class | Role |
+|---|---|
+| `IntegrationGraph` | Topological load order for integrations |
+| `CapabilityNegotiator` | Negotiate capabilities between systems |
+| `IntegrationContract` | Formal validation of system contracts |
+| `CapabilityResolver` | Keyword-based capability matching |
+| `CapabilityRegistry` | Central registry for all capabilities |
+| `MCPAdapter` | **Model Context Protocol** tool adapter |
+
+### 🤖 Autonomous & Adaptive (`autonomous/`, `adaptive/`, `profiles/`)
+| Class | Role |
+|---|---|
+| `AutonomousReflector` | Self-monitoring with auto-pause |
+| `AdaptiveOrchestrator` | Rolling-metric strategy adjustment |
+| `ProfileHierarchy` | Parent→child config inheritance tree |
 
 ---
 
-## 🚀 Quick Start (30 Seconds)
-
-Get your optimized context instantly.
+## 🚀 Quick Start
 
 ```bash
-# 1. Clone & Install
+# Clone
 git clone https://github.com/wahyunuriman999/Ruhci-Claude-Engine.git
 cd Ruhci-Claude-Engine
+
+# Create virtual environment
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+source .venv/bin/activate     # Linux/Mac
+
+# Install
 pip install -r requirements.txt
 
-# 2. Ask a question about any local repository
-python ruhci_ask.py "Fix JWT refresh token expiration bug" --repo /path/to/repo
-
-# 3. Done. Ruhci passes the 3 most relevant files to standard Claude.
+# Run CLI
+python -m cli.main version
+python -m cli.main status
+python -m cli.main run "Analyze the authentication module"
 ```
 
 ---
 
-## 🔍 Real Demo: End-to-End
+## 🧪 Test Suite
 
-**Developer asks:**
-> *"How is the application context managed and pushed to the stack in Flask?"*
-
-**Ruhci analyzes:**
-1. **Candidate Selection**: Extracts symbols and TF-IDF semantics.
-2. **Dependency Graph**: Maps AST imports.
-3. **Intent Classification**: Detects *Structural* intent.
-4. **Ranking & Pruning**: Isolates hub files.
-
-**Claude receives only 4 files:**
-- `globals.py`
-- `helpers.py`
-- `ctx.py`
-- `sansio/app.py`
-
-**Problem solved.** Zero LLM API calls were used to find these files.
-
----
-
-## 📊 Empirical Validation (v1.0)
-
-Ruhci has been empirically tested on massive real-world codebases (`requests`, `flask`, `urllib3`). 
-
-```text
-Performance Summary (Empirical Test 003)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Average Token Reduction
-████████████████████████ 98.6%
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Average Cost Reduction
-████████████████████████ 98.6%
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-*(Based on Empirical Test 003: Flask, Requests, and Urllib3).*
-
-**Real-World Honesty (The Structural Dominance Anomaly):**  
-When queried *"How does SSL certificate verification work?"* on `requests`, Ruhci successfully boosted `adapters.py` and `sessions.py` to the top 3 using semantics. However, `exceptions.py` stole the #1 spot purely due to its massive dependency score (it is imported everywhere). 
-
-**Conclusion**: Downstream AI agents should consume Ruhci's output via a **Top-N approach** (e.g., Top 5) rather than a hard threshold score cutoff, ensuring that highly relevant semantic files are not accidentally truncated behind structurally dominant utility files.
-
----
-
-## ⚙️ How It Works (Architecture)
-
-Ruhci analyzes source code *without* relying on expensive LLM vector embeddings. It builds a precise, structural map of your codebase.
-
-```mermaid
-graph TD
-    A[Developer Query] --> B[Ruhci Intelligence Engine]
-    
-    subgraph Engine
-        B --> C[AST Analyzer & Symbol Extractor]
-        C --> D[Dependency Graph Builder]
-        D --> E[Hybrid Ranking Engine]
-        E --> F[Context Pruner]
-    end
-    
-    F --> G[Evidence-Based Optimized Context]
-    G --> H[LLM / AI Coding Agent]
-```
-
-### 1. Deterministic Repository Understanding
-- Pure AST (Abstract Syntax Tree) parsing
-- Exhaustive symbol extraction (functions, classes, variables)
-- Deep import relationship analysis
-
-### 2. Hybrid Intelligence Ranking
-- **Symbol Evidence**: Exact structural matches.
-- **Dependency Relevance**: Is this file required by the primary target?
-- **Semantic Similarity**: TF-IDF emulation.
-- **Intent Classification**: Lexical heuristics to detect if the user is debugging, refactoring, or learning.
-
----
-
-## 🔌 Integration with AI Agents
-
-Ruhci is designed to be pipeline-agnostic. You can pipe its output directly into your favorite tools:
-- **Claude Code** (Default)
-- **free-claude-code** (Opt-in)
-- **Ollama** (100% Local)
-- **Cursor** / **Continue.dev**
-
-**Execute the complete pipeline locally:**
 ```bash
-# Route to standard Claude (Default)
-python ruhci_ask.py "How does SSL work?" --repo /path/to/repo
-
-# Route to Ollama (100% Local & Free)
-python ruhci_ask.py "How does SSL work?" --repo /path/to/repo --agent ollama
-
-# Route to community proxy
-python ruhci_ask.py "How does SSL work?" --repo /path/to/repo --agent free-claude-code
+pip install pytest pytest-asyncio
+pytest tests/ -q
 ```
-> **Disclaimer**: Standard `claude` requires authentication. You can explicitly pass `--agent free-claude-code` to route to a third-party community proxy. Please review their repository and respect upstream terms of service before using third-party proxies.
+
+**Current results:**
+```
+4 passed, 45 skipped in 0.26s
+```
+
+- ✅ `test_engine.py` — RuhciOrchestrator lifecycle (async)
+- ✅ `test_router.py` — Registry structure and dynamic registration
+- ⏭️ 45 tests skipped with explicit reason (subsystems with optional heavy deps)
 
 ---
 
-## 🛑 What Ruhci Is Not
+## 📁 Project Structure
 
-Before using Ruhci, it is important to understand what it is not. We are engineers, not marketers.
-
-❌ A replacement for Claude, GPT, or Gemini  
-❌ An autonomous coding agent  
-❌ A magic fuzzy search engine or True NLP  
-
-**Ruhci IS:**  
-✓ A deterministic context optimization layer  
-✓ An evidence extraction system  
-✓ A strict, fast bridge between massive software repositories and AI models  
-
----
-
-## ⚠️ Limitations & Known Edge Cases (Brutally Honest)
-
-As a deterministic system based on TF-IDF and AST (without Vector Embeddings or Machine Learning), Ruhci has inherent limitations:
-
-- **Heuristic Intent Detection**: The `QueryIntentClassifier` relies entirely on lexical heuristics (e.g., matching the phrase "how to" to determine Usage intent). It is not true NLP and cannot understand nuanced or implicitly phrased intents.
-- **Structural Dominance**: Files with high dependency in-degrees (like `exceptions.py` or base classes) can accumulate massive scores and dominate the #1 rank, occasionally overshadowing files that are more semantically relevant to the specific query.
-- **Substring Match False Positives**: For very short query terms (like `ssl`, `jwt`, `db`), bidirectional substring matching (`term in token or token in term`) can trigger false positives (e.g., `ssl` will match a variable named `sesslink`).
-- **Semantic Gap**: Cannot recognize conceptual synonyms (e.g., "TLS handshake" will not catch files containing the word "SSL" if there is no string overlap at all).
-- **Abbreviation Mismatch**: Developers might use abbreviations in code (e.g., `jwt`), while the user asks with the full words ("JSON Web Token"). Ruhci will not find a match without embeddings.
-
-Therefore, Ruhci is positioned as an **efficient structural complement** to Vector RAG systems and a pre-filter for LLMs, not an absolute replacement.
+```
+Ruhci-Claude-Engine/
+├── engine/           # Core orchestrator + engine lifecycle
+├── memory/           # Episodic, semantic, working memory
+├── cognitive/        # Reasoning, metacognition, abstraction
+├── router/           # Task, tool, model, context routing
+├── planner/          # Task breakdown + priority scheduling
+├── decision/         # Consensus engine + policy evaluator
+├── reflection/       # Evaluator + self-auditing loop
+├── autonomous/       # AutonomousReflector
+├── adaptive/         # AdaptiveOrchestrator (strategy tuning)
+├── fabric/           # Agent mesh: transport, protocol, scheduler
+├── kernel/           # Registry, CommandBus, Logger
+├── repository/       # Static code analysis without LLM
+├── indexer/          # Cache + EmbeddingIndexer
+├── integrations/     # Integration graph + contracts
+├── capabilities/     # Capability registry + resolver
+├── extensions/       # MCP adapter
+├── profiles/         # Profile hierarchy (parent→child config)
+├── cli/              # CLI entry point (run/status/version)
+├── tools/            # Tool registry
+├── benchmark/        # Empirical testing framework
+├── tests/            # Pytest test suite
+├── docs/             # Architecture, ADR, design philosophy
+├── pyproject.toml    # Build config + pytest settings
+└── requirements.txt  # Dependencies
+```
 
 ---
 
 ## 🗺️ Roadmap
 
-- [x] **v0.3** - Functional Research Preview (End-to-End AST Pipeline)
-- [x] **v0.4** - Vector-Semantic Pre-filtering & Content Search
-- [x] **v0.6** - Semantic Calibration & Edge Case Mitigation
-- [x] **v0.7** - Intent Dynamics & Lexical Analytics
-- [x] **v1.0** - Production Engine Release
-- [ ] **v1.x** - Multi-Language Support (JS/TS, Go, Rust)
+- [x] **v1.0** — Core engine, memory, cognitive subsystems
+- [x] **v1.0.1** — Routing, decision, planning subsystems  
+- [x] **v1.0.2** — Reflection, execution, tool registry
+- [x] **v1.0.3** — Fabric mesh, kernel, repository analysis
+- [x] **v1.0.4** — Integrations, MCP adapter, adaptive strategy, CLI
+- [ ] **v1.1** — Live LLM integration (Claude / GPT / Ollama)
+- [ ] **v1.2** — Multi-agent orchestration with shared blackboard
+- [ ] **v1.3** — Web dashboard for agent session monitoring
+- [ ] **v2.0** — Persistent agent memory across sessions (SQLite/Redis)
+
+---
+
+## ⚠️ Honest Limitations
+
+We are engineers, not marketers.
+
+| Limitation | Impact |
+|---|---|
+| No live LLM calls yet | Agents plan and route, but don't call Claude/GPT in real-time yet |
+| Bag-of-words similarity | `EmbeddingIndexer` uses word overlap, not neural embeddings |
+| In-memory state | No persistence between process restarts |
+| Optional heavy deps | `tree-sitter`, `networkx`, `loguru` not installed by default venv |
 
 ---
 
 ## 🤝 Contributing
 
-We actively invite you to try and break our benchmark. If you find edge cases where Ruhci fails to retrieve the correct context, please submit them!
-
-Read our [Community Benchmark Guidelines](benchmark/community/README.md) to submit a failure case.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to submit bug reports, edge cases, or new subsystem proposals.
 
 ---
-**Copyright © 2026 Wahyu Nur Iman**  
+
+<div align="center">
+
+**Copyright © 2024–2026 Wahyu Nur Iman**  
 Licensed under the MIT License.  
-*Ruhci™ is a project by Wahyu Nur Iman.*
+*Ruhci™ is an open-source AI Agent OS by Wahyu Nur Iman.*
+
+</div>

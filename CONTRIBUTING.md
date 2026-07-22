@@ -1,36 +1,103 @@
-# Contributing to Ruhci
+# Contributing to Ruhci Claude Engine
 
-First off, thank you for considering contributing to Ruhci! It's people like you that make Ruhci a world-class context intelligence engine for AI.
+Thank you for your interest in contributing! Ruhci is an open-source Autonomous AI Agent OS and we welcome contributions of all kinds.
 
-We welcome community contributions, particularly in exposing failures in our AST parsing, proposing improvements to our hybrid ranking engine, and extending support for new frameworks.
+---
 
-## 1. Where to Start
-- **Did you find a bug?** Please submit it using our Bug Report issue template.
-- **Do you want to request a feature?** Please use the Feature Request issue template.
-- **Want to break our parser?** Head over to our `benchmark/community/` directory to learn how to submit "Failure Cases" so we can analyze them scientifically.
+## 🧭 Project Philosophy
 
-## 2. Setting Up Your Development Environment
-1. Clone the repository: `git clone https://github.com/wahyunuriman999/Ruhci-Claude-Engine.git`
-2. Create a virtual environment: `python -m venv venv`
-3. Activate the virtual environment and install dependencies: `pip install -r requirements.txt`
+Ruhci is built on three principles:
 
-## 3. Pull Request Process
-1. Fork the repo and create your branch from `main`.
-2. If you've added code that should be tested, add tests.
-3. If you've changed APIs, update the documentation.
-4. Ensure your code lints and tests pass.
-5. Issue that pull request using our Pull Request Template!
+1. **Honesty over hype** — We only document what is actually implemented and working.
+2. **Modularity** — Each subsystem (memory, router, planner, fabric, etc.) is independent and replaceable.
+3. **Real code only** — No stubs, no `pass`-only bodies. Every class must do real work.
 
-## 4. Code Style & Architecture Philosophy
-Please remember the 4 golden rules of Ruhci's design philosophy (`docs/design_philosophy.md`) when contributing:
-1. *Never send unnecessary files.*
-2. *Never trust semantic similarity alone.*
-3. *Never hide uncertainty.*
-4. *Prefer deterministic evidence over probabilistic guessing.*
+---
 
-## 5. Community Validation Hub
-If you are contributing an edge case or a benchmark test to the Community Hub:
-1. Ensure your payload conforms to `benchmark/community/submit_template.json`.
-2. Clearly explain *why* Ruhci failed to fetch the right context in your test.
+## 🛠️ How to Set Up Locally
 
-Thank you for contributing to the future of deterministic AI tools!
+```bash
+git clone https://github.com/wahyunuriman999/Ruhci-Claude-Engine.git
+cd Ruhci-Claude-Engine
+
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+source .venv/bin/activate     # Linux/Mac
+
+pip install -r requirements.txt
+pip install pytest pytest-asyncio  # for running tests
+```
+
+Run the test suite:
+```bash
+pytest tests/ -q
+# Expected: 4 passed, 45 skipped, 0 failed
+```
+
+---
+
+## 📦 Subsystem Map
+
+| Directory | Purpose |
+|---|---|
+| `engine/` | Core orchestrator and session management |
+| `memory/` | Episodic, semantic, working memory |
+| `cognitive/` | Reasoning, metacognition, abstraction |
+| `router/` | Task, tool, model, context routing |
+| `planner/` | Task decomposition and priority scheduling |
+| `decision/` | Consensus engine and policy evaluation |
+| `reflection/` | Autonomous self-monitoring |
+| `adaptive/` | Strategy adjustment from metrics |
+| `fabric/` | Inter-agent message passing and scheduling |
+| `kernel/` | Logging, registry, command bus |
+| `repository/` | Static code analysis (no LLM needed) |
+| `indexer/` | Caching and embedding-based search |
+| `integrations/` | External system integration contracts |
+| `capabilities/` | Capability registry and resolver |
+| `extensions/mcp_adapter/` | Model Context Protocol adapter |
+| `profiles/` | Profile hierarchy with config inheritance |
+| `cli/` | Command-line interface |
+
+---
+
+## ✅ What to Contribute
+
+- **Bug fixes** — Fix logic errors in any subsystem
+- **New subsystem features** — Add methods to existing classes
+- **Test implementations** — Activate skipped tests by implementing their modules
+- **LLM integration** — Wire `engine/core.py` to a real LLM API (Claude, GPT, Ollama)
+- **Documentation** — Improve docs, add examples, write tutorials
+
+---
+
+## ❌ What We Will Not Accept
+
+- Stub-only files (`pass` body with no logic)
+- Files that add imports without implementations
+- Code that re-introduces previously removed binary artifacts
+- External dependencies without justification in the PR description
+
+---
+
+## 📝 Pull Request Process
+
+1. Fork the repository
+2. Create a branch: `git checkout -b feat/your-feature-name`
+3. Make your changes with real, working code
+4. Run `pytest tests/` — ensure 0 new failures
+5. Submit a PR with a clear description of what you added and why
+
+---
+
+## 📋 Reporting Issues / Edge Cases
+
+If you discover a failure case in any subsystem, please open a GitHub Issue with:
+
+- Which module/class failed
+- Input that triggered the failure  
+- Expected vs. actual behavior
+
+---
+
+**Copyright © 2024–2026 Wahyu Nur Iman**  
+Licensed under the MIT License.
