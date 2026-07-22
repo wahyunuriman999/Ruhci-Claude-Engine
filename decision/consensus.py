@@ -5,12 +5,28 @@
 # All rights reserved.
 # ==========================================
 
-from loguru import logger
+from typing import Dict, Any, List
 
 class ConsensusEngine:
-    def resolve(self, proposals):
-        logger.info("ConsensusEngine resolving conflicting proposals...")
-        # Voting -> Confidence -> Policy -> Decision
-        best_proposal = max(proposals, key=lambda p: p.get('confidence', 0))
-        logger.info(f"Consensus reached. Winner: {best_proposal['agent']}")
-        return best_proposal
+    """Builds consensus across multiple agent proposals."""
+    
+    def __init__(self):
+        pass
+        
+    def reach_consensus(self, proposals: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Evaluates multiple proposals and selects the best one, or merges them.
+        Assumes proposals have a 'score' and 'action' field.
+        """
+        if not proposals:
+            return {"status": "failed", "reason": "No proposals to evaluate."}
+            
+        # Simple highest-score wins implementation for now
+        best_proposal = max(proposals, key=lambda p: p.get("score", 0.0))
+        
+        return {
+            "status": "success",
+            "selected_action": best_proposal.get("action"),
+            "confidence_score": best_proposal.get("score", 0.0),
+            "total_proposals_evaluated": len(proposals)
+        }
