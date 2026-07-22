@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ruhci-engine"
+version = "1.0.0"
+dependencies = [
+    "tree-sitter",
+    "tree-sitter-python",
+    "networkx",
+    "loguru"
+]

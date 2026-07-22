@@ -6,7 +6,7 @@
   <p><strong>Don't make AI read everything. Make it read the right things.</strong></p>
 
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
-  [![Status](https://img.shields.io/badge/status-Production-green.svg)](#)
+  [![Status](https://img.shields.io/badge/status-Beta-yellow.svg)](#)
 </div>
 
 <br>

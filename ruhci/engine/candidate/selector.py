@@ -4,13 +4,11 @@ class CandidateSelector:
         Filters candidates based on query term overlap with file paths and file contents,
         and pulls in highly central hub files from the dependency graph.
         """
-        import re
         import os
+        from ruhci.utils.text import extract_query_terms
         
         # Deterministic filtering based on path relevance with safe stemming
-        raw_terms = set(re.findall(r'\w+', query.lower()))
-        exceptions = {"does", "status", "utils", "this", "is", "has", "was", "as", "its", "us", "analysis", "process", "access"}
-        query_terms = {t[:-1] if t.endswith('s') and not t.endswith('ss') and t not in exceptions and len(t) > 3 else t for t in raw_terms}
+        query_terms = extract_query_terms(query)
         
         scored_files = []
         for f in all_files:
@@ -50,8 +48,10 @@ class CandidateSelector:
                     hub_scores.append((graph.graph.degree(f), f))
             hub_scores.sort(key=lambda x: (-x[0], x[1]))
             
-            # Inject top 10 most imported hub files
+            # Inject top 10 most imported hub files, respecting max_candidates limit
             for _, hub_file in hub_scores[:10]:
+                if len(top_files) >= max_candidates:
+                    break
                 if hub_file not in top_files:
                     top_files.append(hub_file)
                 

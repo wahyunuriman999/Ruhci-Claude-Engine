@@ -1,6 +1,6 @@
 from ruhci.ranking.intent import QueryIntentClassifier
 from ruhci.ranking.semantic import ContentAnalyzer
-import re
+from ruhci.utils.text import extract_query_terms
 
 class HybridRankerV02:
     """
@@ -13,9 +13,10 @@ class HybridRankerV02:
     2. Dependency Dominance: Implemented Semantic Gate. High in-degree files (models.py) 
        are penalized if they do not possess any symbol or semantic relevance to the query.
     """
-    def __init__(self):
+    def __init__(self, penalized_containers: list = None):
         self.intent_classifier = QueryIntentClassifier()
         self.content_analyzer = ContentAnalyzer()
+        self.penalized_containers = penalized_containers or ["exceptions.py", "__init__.py", "compat.py", "types.py", "interfaces.py"]
         # Updated Guardrail Weights
         self.weights = {
             "symbol": 0.40,
@@ -33,27 +34,8 @@ class HybridRankerV02:
         in_degree = graph.graph.in_degree(filepath)
         return min(1.0, 0.1 + (in_degree * 0.1))
 
-    def _stem_term(self, term: str) -> str:
-        # Do not stem very short or common structural terms
-        if len(term) < 6:
-            return term
-        for suffix in ["ing", "ed", "s", "es", "ly", "tion", "ity", "ment", "able", "ible"]:
-            if term.endswith(suffix):
-                return term[:-len(suffix)]
-        return term
-
     def rank(self, query: str, candidates: list, metadata_index: dict, graph) -> list:
-        # Word tokenization for query terms (ignore punctuation) with safe stemming
-        raw_terms = set(re.findall(r'\w+', query.lower()))
-        stopwords = {"how", "does", "work", "what", "where", "why", "who", "when", "is", "are", "am", "be", "been", "being", "have", "has", "had", "do", "did", "and", "or", "but", "if", "for", "in", "of", "to", "with", "on", "by", "this", "that", "it", "its", "us", "a", "an", "the"}
-        
-        query_terms = set()
-        for t in raw_terms:
-            if t in stopwords: continue
-            t = self._stem_term(t)
-            if len(t) > 2:
-                query_terms.add(t)
-        
+        query_terms = extract_query_terms(query)
         intents = self.intent_classifier.classify(query)
         ranked_results = []
         
@@ -83,7 +65,8 @@ class HybridRankerV02:
             # DEPENDENCY-SEMANTIC CALIBRATION
             # Prevent files with huge dependency scores (like models.py) from dominating 
             # if their semantic relevance is low.
-            dependency_score *= min(1.0, semantic_score * 4.0)
+            # Fix Priority 2 (J): Avoid zeroing out files if semantic score is 0. 
+            dependency_score *= min(1.0, 0.1 + semantic_score * 4.0)
             
             # 4. Intent Score
             in_degree = graph.graph.in_degree(filepath) if graph and graph.graph.has_node(filepath) else 0
@@ -119,7 +102,7 @@ class HybridRankerV02:
                 final_score *= 0.5
                 
             # Issue #1: Penalize container files to prevent Structural Dominance
-            if any(container in filepath_lower for container in ["exceptions.py", "__init__.py", "compat.py", "types.py", "interfaces.py"]):
+            if any(container in filepath_lower for container in self.penalized_containers):
                 final_score *= 0.1 # Massive penalty
 
                 

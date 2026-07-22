@@ -1,5 +1,10 @@
 __pycache__/
 *.pyc
+*.pyo
+.pytest_cache/
+
+build_*.py
+scaffold*.py
 
 *_clone/
 *_clone

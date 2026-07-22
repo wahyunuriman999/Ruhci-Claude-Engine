@@ -5,17 +5,19 @@ from ruhci.engine.candidate.selector import CandidateSelector
 from ruhci.ranking.hybrid_ranker import HybridRankerV02
 
 class RuhciEngine:
-    def __init__(self, target_dir: str):
+    def __init__(self, target_dir: str, extensions: list = None):
         self.target_dir = target_dir
+        self.extensions = extensions or [".py"]
         self.ranker = HybridRankerV02()
 
     def compile_context(self, query: str) -> list[dict]:
         all_files = []
+        excluded_files = set(os.environ.get("RUHCI_EXCLUDE_FILES", "").split(","))
         for root, dirs, files in os.walk(self.target_dir):
             if any(ignored in root for ignored in ['venv', '.git', '__pycache__', 'node_modules', 'scratch']):
                 continue
             for file in files:
-                if file.endswith('.py') and file != 'empirical_test.py':
+                if any(file.endswith(ext) for ext in self.extensions) and file not in excluded_files:
                     filepath = os.path.join(root, file).replace('\\', '/')
                     if filepath.startswith('./'):
                         filepath = filepath[2:]

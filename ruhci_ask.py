@@ -5,7 +5,7 @@ import argparse
 import subprocess
 from ruhci.engine.core import RuhciEngine
 
-def get_top_files_content(engine: RuhciEngine, query: str, top_n: int = 3) -> str:
+def get_top_files_content(engine: RuhciEngine, query: str, top_n: int = 3, explain: bool = False) -> str:
     print(f"\n[Ruhci] Analyzing repository locally (0 API calls)...")
     results = engine.compile_context(query)
     
@@ -46,6 +46,10 @@ def get_top_files_content(engine: RuhciEngine, query: str, top_n: int = 3) -> st
             continue
             
         print(f"  [{valid_count+1}] Selected: {filepath} (Score: {score:.3f})")
+        if explain:
+            signals = res.get('signals', {})
+            print(f"      -> Breakdown: {signals}")
+            
         context_text += f"--- FILE: {filepath} ---\n```python\n{content}\n```\n\n"
         valid_count += 1
         
@@ -86,6 +90,7 @@ def main():
     parser.add_argument("--top", type=int, default=3, help="Number of files to extract")
     parser.add_argument("--agent", type=str, default="claude", help="The AI CLI to route to (claude, ollama, free-claude-code)")
     parser.add_argument("--dry-run", action="store_true", help="Just print the context, do not execute AI")
+    parser.add_argument("--explain", action="store_true", help="Print scoring breakdown for selected files")
     
     args = parser.parse_args()
     
@@ -93,7 +98,7 @@ def main():
     sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
     
     engine = RuhciEngine(args.repo)
-    context = get_top_files_content(engine, args.query, args.top)
+    context = get_top_files_content(engine, args.query, args.top, explain=args.explain)
     
     if not context:
         print("[Ruhci] No Python files found or indexed.")

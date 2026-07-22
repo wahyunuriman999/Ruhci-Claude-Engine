@@ -6,9 +6,9 @@ class ContextPruner:
             self.rel_ratio = 0.70
             self.gap_threshold = 0.25
         else: # exploration
-            self.abs_threshold = 0.30
-            self.rel_ratio = 0.50
-            self.gap_threshold = 0.40
+            self.abs_threshold = 0.15
+            self.rel_ratio = 0.40
+            self.gap_threshold = 0.50
 
     def prune(self, ranked_candidates):
         if not ranked_candidates:
@@ -32,10 +32,9 @@ class ContextPruner:
                     break
                     
             # 3. Dependency Evidence Lock
-            if i > 0:
-                dep_score = candidate["signals"]["dependency"]
-                if dep_score < 0.4:
-                    continue
+            dep_score = candidate["signals"]["dependency"]
+            if dep_score < 0.4:
+                continue
             
             final_context.append(candidate)
             
