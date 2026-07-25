@@ -5,7 +5,8 @@
 # All rights reserved.
 # ==========================================
 
-from loguru import logger
+import logging
+logger = logging.getLogger(__name__)
 
 class EventBus:
     def __init__(self):

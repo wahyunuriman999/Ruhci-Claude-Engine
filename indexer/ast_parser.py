@@ -5,13 +5,26 @@
 # All rights reserved.
 # ==========================================
 
+import os
+import json
 import tree_sitter_python as tspython
 from tree_sitter import Language, Parser
 from indexer.metadata import FileMetadata, CodeSymbol
 from loguru import logger
 
+# Default location for the on-disk parse cache. One JSON file per target
+# repo, keyed by filepath -> (mtime, size, serialized FileMetadata). This is
+# separate from indexer.cache.IndexerCache (in-memory/TTL) because that cache
+# is process-local and is useless for a CLI tool that starts a fresh
+# process on every invocation — every call to compile_context() previously
+# re-ran tree-sitter over 100% of the repo, every time, even when nothing
+# had changed since the last query.
+DEFAULT_CACHE_DIR = ".ruhci_cache"
+CACHE_FILE_NAME = "ast_index.json"
+
+
 class ASTParser:
-    def __init__(self):
+    def __init__(self, cache_dir: str = None, use_cache: bool = True):
         try:
             self.PY_LANGUAGE = Language(tspython.language())
             self.parser = Parser(self.PY_LANGUAGE)
@@ -20,10 +33,54 @@ class ASTParser:
             logger.error(f"Failed to initialize Tree-sitter: {e}")
             self.parser = None
 
+        self.use_cache = use_cache
+        self.cache_dir = cache_dir or DEFAULT_CACHE_DIR
+        self._cache_path = os.path.join(self.cache_dir, CACHE_FILE_NAME)
+        self._disk_cache: dict = {}
+        self._cache_dirty = False
+        if self.use_cache:
+            self._load_cache()
+
+    def _load_cache(self) -> None:
+        try:
+            if os.path.exists(self._cache_path):
+                with open(self._cache_path, "r", encoding="utf-8") as f:
+                    self._disk_cache = json.load(f)
+        except Exception as e:
+            logger.warning(f"Could not read AST cache ({self._cache_path}): {e}")
+            self._disk_cache = {}
+
+    def save_cache(self) -> None:
+        """Persist the in-memory cache dict to disk. Call once after a batch
+        of parse_python_file() calls (e.g. at the end of compile_context)."""
+        if not self.use_cache or not self._cache_dirty:
+            return
+        try:
+            os.makedirs(self.cache_dir, exist_ok=True)
+            with open(self._cache_path, "w", encoding="utf-8") as f:
+                json.dump(self._disk_cache, f)
+            self._cache_dirty = False
+        except Exception as e:
+            logger.warning(f"Could not write AST cache ({self._cache_path}): {e}")
+
     def parse_python_file(self, filepath: str) -> FileMetadata:
         if not self.parser:
             return FileMetadata(filepath=filepath, language="python")
-            
+
+        # Cache lookup keyed on (mtime, size) — cheap stat(), no hashing.
+        # Any change to the file's size or mtime invalidates the entry.
+        if self.use_cache:
+            try:
+                stat = os.stat(filepath)
+                cache_key = filepath
+                entry = self._disk_cache.get(cache_key)
+                if entry and entry.get("mtime") == stat.st_mtime and entry.get("size") == stat.st_size:
+                    return FileMetadata(**entry["metadata"])
+            except OSError:
+                stat = None
+        else:
+            stat = None
+
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
                 content = f.read()
@@ -69,13 +126,23 @@ class ASTParser:
                     traverse(child)
                     
             traverse(root_node)
-            
-            return FileMetadata(
+
+            metadata = FileMetadata(
                 filepath=filepath, 
                 language="python", 
                 symbols=symbols,
                 imports=imports
             )
+
+            if self.use_cache and stat is not None:
+                self._disk_cache[filepath] = {
+                    "mtime": stat.st_mtime,
+                    "size": stat.st_size,
+                    "metadata": metadata.model_dump(),
+                }
+                self._cache_dirty = True
+
+            return metadata
         except Exception as e:
             logger.error(f"Error parsing {filepath}: {e}")
             return FileMetadata(filepath=filepath, language="python")

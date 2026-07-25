@@ -1,20 +1,34 @@
 <div align="center">
 
 <h1>🧠 Ruhci Claude Engine</h1>
-<p><strong>Autonomous AI Agent Operating System</strong></p>
-<p><em>A full-stack cognitive runtime for building, running, and orchestrating autonomous AI agents</em></p>
+<p><strong>Deterministic Context Optimization Engine for AI Coding Agents</strong></p>
+<p><em>A working file-selection/ranking pipeline (ruhci/, indexer/), plus a set of early-stage, not-yet-wired subsystems under active development</em></p>
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-4%20passed%20%7C%200%20failed-brightgreen.svg)](#)
-[![Build](https://img.shields.io/badge/build-7-orange.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-5%20passed%20%7C%2045%20skipped-yellow.svg)](#)
 [![Status](https://img.shields.io/badge/status-Active%20Development-yellow.svg)](#)
 
 <br/>
 
-> **"Don't make AI read everything. Make it think — autonomously."**
+> **"Don't make AI read everything. Make it read the right things."**
 
 </div>
+
+---
+
+> **Honesty note:** the sections below describe a lot of subsystems
+> (`fabric/`, `kernel/`, `adaptive/`, `autonomous/`, `runtime/`, `graph/`,
+> `policy/`, `profiles/`, `memory/`, `cognitive/`, `router/`). As of this
+> version **none of them are imported by anything else in the codebase** —
+> they are standalone modules with their own unit tests, not yet wired into
+> `RuhciOrchestrator` or the CLI. `RuhciOrchestrator.run()` itself is a
+> stub: it returns a canned `TaskResult` and a synthetic token count
+> (`len(objective.split()) * 10`), it does not call memory/router/planner/
+> reflection at all. The parts that are real and working today are the
+> context-selection pipeline (`ruhci/`, `indexer/`, `engine/core.py`,
+> reachable via `ruhci_ask.py`) — everything else below is roadmap, described
+> here for contributors, not a claim that it's live.
 
 ---
 
@@ -177,7 +191,10 @@ pytest tests/ -q
 
 **Current results:**
 ```
-4 passed, 45 skipped in 0.26s
+5 passed, 45 skipped in 0.2s
+# the 45 skips are real: those test files each explicitly skip with
+# "module not yet implemented" — they're placeholders for the roadmap
+# subsystems listed above, not currently-passing coverage.
 ```
 
 - ✅ `test_engine.py` — RuhciOrchestrator lifecycle (async)

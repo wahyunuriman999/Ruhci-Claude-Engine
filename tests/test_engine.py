@@ -22,5 +22,5 @@ async def test_orchestrator_run_loop():
     
     assert len(final_state.tasks) == 1
     assert final_state.tasks[0].status == "COMPLETED"
-    assert "[REVIEWED]" in final_state.tasks[0].result
+    assert "[EXECUTED]" in final_state.tasks[0].result
     assert final_state.token_usage > 0

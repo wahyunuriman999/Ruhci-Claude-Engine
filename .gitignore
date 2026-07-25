@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+.ruhci_cache/
 *.pyo
 .pytest_cache/
 

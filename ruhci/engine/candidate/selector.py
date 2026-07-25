@@ -26,9 +26,10 @@ class CandidateSelector:
                 full_path = getattr(analyzer, '_path_index', {}).get(f)
                 cached_content = analyzer._content_cache.get(full_path or f)
                             
+                import re
                 if cached_content:
                     for term in query_terms:
-                        if term in cached_content:
+                        if re.search(r'\b' + re.escape(term) + r'\b', cached_content, re.IGNORECASE):
                             score += 1.0  # Content match gets lower weight but is enough to select it
             
             scored_files.append((score, f))

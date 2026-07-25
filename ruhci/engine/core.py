@@ -34,7 +34,8 @@ class RuhciEngine:
             # Create a reverse index mapping to avoid O(N*M) lookups later
             self.ranker.content_analyzer._path_index[f] = full_path
 
-        parser = ASTParser()
+        cache_dir = os.path.join(self.target_dir, ".ruhci_cache") if self.target_dir != '.' else ".ruhci_cache"
+        parser = ASTParser(cache_dir=cache_dir)
         metadatas = []
         metadata_index = {}
         for f in all_files:
@@ -42,6 +43,9 @@ class RuhciEngine:
             meta = parser.parse_python_file(f)
             metadatas.append(meta)
             metadata_index[f] = meta
+        # Flush the mtime+size keyed cache once per run, not per file, to
+        # avoid a disk write on every single parsed file.
+        parser.save_cache()
 
         graph = DependencyGraph()
         graph.build_from_metadata(metadatas)
