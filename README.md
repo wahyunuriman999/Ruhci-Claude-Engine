@@ -60,6 +60,38 @@ Developer Objective
 
 ---
 
+## 🗺️ Product Map: Ruhci Ecosystem
+
+```mermaid
+mindmap
+  root((Ruhci Engine))
+    OS Pipeline
+      Orchestrator
+      Kernel EventBus
+      Task Scheduler
+      Autonomous Reflector
+    Memory Hierarchy
+      Working Memory
+      Episodic Logs
+      Semantic Knowledge
+    Cognitive Routing
+      Task Router
+      Model Router
+      Tool Router
+      Decision Consensus
+    Codebase Analysis
+      AST Parser
+      Change Detector
+      Context Pruner
+      Embedding Indexer
+    Agent Fabric
+      Message Transport
+      Worker Pool
+      State Synchronizer
+```
+
+---
+
 ## 🏗️ Architecture — Subsystems
 
 Ruhci is organized as a layered OS. Each subsystem is an independent, importable Python module with real logic.
