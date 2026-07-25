@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-5%20passed%20%7C%2045%20skipped-yellow.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-6%20passed%20%7C%2043%20skipped-yellow.svg)](#)
 [![Status](https://img.shields.io/badge/status-Active%20Development-yellow.svg)](#)
 
 <br/>
@@ -17,18 +17,20 @@
 
 ---
 
-> **Honesty note:** the sections below describe a lot of subsystems
+> **Honesty note:** While the sections below describe many advanced subsystems
 > (`fabric/`, `kernel/`, `adaptive/`, `autonomous/`, `runtime/`, `graph/`,
-> `policy/`, `profiles/`, `memory/`, `cognitive/`, `router/`). As of this
-> version **none of them are imported by anything else in the codebase** —
-> they are standalone modules with their own unit tests, not yet wired into
-> `RuhciOrchestrator` or the CLI. `RuhciOrchestrator.run()` itself is a
-> stub: it returns a canned `TaskResult` and a synthetic token count
-> (`len(objective.split()) * 10`), it does not call memory/router/planner/
-> reflection at all. The parts that are real and working today are the
-> context-selection pipeline (`ruhci/`, `indexer/`, `engine/core.py`,
-> reachable via `ruhci_ask.py`) — everything else below is roadmap, described
-> here for contributors, not a claim that it's live.
+> `policy/`, `profiles/`, `memory/`, `cognitive/`, `router/`), Ruhci is currently
+> in an active transition phase. 
+>
+> As of our latest release, the **core OS pipeline is now natively wired**: 
+> `RuhciOrchestrator.run()` dynamically coordinates `EventBus`, `TaskScheduler`, 
+> `AutonomousReflector`, and `ConversationMemory` to execute objectives and track metrics. 
+> The context-selection pipeline (`ruhci/`, `indexer/`) is also fully functional.
+> 
+> However, many *other* advanced modules (like multi-agent networking, consensus, 
+> and policy evaluation) remain as standalone modules with their own unit tests 
+> and are not yet fully wired into the central orchestrator. They are roadmapped 
+> components described below for contributors.
 
 ---
 
@@ -191,15 +193,17 @@ pytest tests/ -q
 
 **Current results:**
 ```
-5 passed, 45 skipped in 0.2s
-# the 45 skips are real: those test files each explicitly skip with
+6 passed, 43 skipped in 0.6s
+# the 43 skips are real: those test files each explicitly skip with
 # "module not yet implemented" — they're placeholders for the roadmap
 # subsystems listed above, not currently-passing coverage.
 ```
 
-- ✅ `test_engine.py` — RuhciOrchestrator lifecycle (async)
+- ✅ `test_engine.py` — RuhciOrchestrator lifecycle natively wiring subsystems
 - ✅ `test_router.py` — Registry structure and dynamic registration
-- ⏭️ 45 tests skipped with explicit reason (subsystems with optional heavy deps)
+- ✅ `test_kernel_buses.py` — EventBus pub/sub capabilities
+- ✅ `test_runtime_scheduler.py` — TaskScheduler priority queue execution
+- ⏭️ 43 tests skipped with explicit reason (subsystems awaiting active wiring)
 
 ---
 
