@@ -15,6 +15,7 @@ class EnginePolicy(BaseModel):
     ask_user_on_security: bool = True
     max_cost_usd: float = 0.5
     max_tokens: int = 120000
+    ponytail_mode: bool = False
 
 class Profile(BaseModel):
     name: str
@@ -22,3 +23,6 @@ class Profile(BaseModel):
     
 def get_enterprise_profile() -> Profile:
     return Profile(name="Enterprise", policy=EnginePolicy(retry_limit=5))
+
+def get_ponytail_profile() -> Profile:
+    return Profile(name="Ponytail", policy=EnginePolicy(retry_limit=3, ponytail_mode=True))
